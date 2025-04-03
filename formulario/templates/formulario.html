@@ -1,0 +1,248 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+
+<style>
+    .hidden {
+        display: none;
+    }
+</style>
+
+<h1 class="display-6 p-1">Formulario para el pre-registro de Tutorías</h1><br>
+<h1>{{error}}</h1>
+<form class="p-2" action="/formulario/" method="post">
+    {% csrf_token %}
+    <ul class="list-group">
+        <li class="list-group-item" name = "datos_profesor">
+            <div class="form-group">
+                <label class="form-label p-2" for="Nombre">Nombre del profesor tutor o profesora tutora</label>
+                <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="Nombre" name="Nombre">
+            </div>
+            <div class="form-group">
+                <label  class="form-label p-2" for="correo_1">Correo electrónico Institucional</label>
+                <input type="email" class="form-control text-dark" style="background-color: lightgray;" id="correo_1" name="correo_1">
+            </div>
+            <div class="form-group">
+                <label  class="form-label p-2" for="correo_2">Correo electrónico Alterno</label>
+                <input type="email" class="form-control text-dark" style="background-color: lightgray;" id="correo_2" name="correo_2">
+            </div>
+        </li>
+        <li class="list-group-item" name = "tutoria_grupal">
+            <p><b>Tutoría Grupal</b></p>
+            <p>Ingrese los grupos a los cuales está impartiendo clase en este semestre en los cuales quiere realizar tutoría grupal.</p>            
+            <div class="form-group">
+                <label class="form-label p-2" for="grupo_1">Grupo 1</label>
+                <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="grupo_1" name="grupo">
+            </div>
+            <div class="form-group">
+                <label class="form-label p-2" for="unidad_1">Unidad de aprendizaje impartida</label>
+                <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="unidad_1" name="unidad">
+            </div>
+            <div class="form-group">
+                <label class="form-label p-2" for="carrera_1">Carrera</label>
+                <select class="form-control text-dark" style="background-color: lightgray;" id="carrera_1" name="carrera">
+                    <option value="isc">Ingeniería en Sistemas Computacionales</option>
+                    <option value="iia">Ingeniería en Inteligencia Artificial</option>
+                    <option value="lcd">Licenciatura en Ciencia de Datos</option>
+                    <option value="isisa">ISISA</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label p-2" for="numero_hombres_grupal_1">Número de hombres</label>
+                <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="numero_hombres_grupal_1" name="numero_hombres_grupal">
+            </div>
+            <div class="form-group">
+                <label class="form-label p-2" for="numero_mujeres_grupal_1">Número de mujeres</label>
+                <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="numero_mujeres_grupal_1" name="numero_mujeres_grupal">
+            </div>
+            <div class="form-group">
+                <label class="form-label p-2" for="lista_alumnos_grupal_1">Incluya la liga al archivo con la lista de alumnos</label>
+                <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="lista_alumnos_grupal_1" name="lista_alumnos_grupal">
+            </div>
+            <br>
+            <div class="form-group">
+                <label class="form-label p-2" for="grupo_2">Grupo 2</label>
+                <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="grupo_2" name="grupo">
+            </div>
+            <div class="form-group">
+                <label class="form-label p-2" for="unidad_2">Unidad de aprendizaje impartida</label>
+                <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="unidad_2" name="unidad">
+            </div>
+            <div class="form-group">
+                <label class="form-label p-2" for="carrera_2">Carrera</label>
+                <select class="form-control text-dark" style="background-color: lightgray;" id="carrera_2" name="carrera">
+                    <option value="isc">Ingeniería en Sistemas Computacionales</option>
+                    <option value="iia">Ingeniería en Inteligencia Artificial</option>
+                    <option value="lcd">Licenciatura en Ciencia de Datos</option>
+                    <option value="isisa">ISISA</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label p-2" for="numero_hombres_grupal_2">Número de hombres</label>
+                <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="numero_hombres_grupal_2" name="numero_hombres_grupal">
+            </div>
+            <div class="form-group">
+                <label class="form-label p-2" for="numero_mujeres_grupal_2">Número de mujeres</label>
+                <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="numero_mujeres_grupal_2" name="numero_mujeres_grupal">
+            </div>
+            <div class="form-group">
+                <label class="form-label p-2" for="lista_alumnos_grupal_2">Incluya la liga al archivo con la lista de alumnos</label>
+                <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="lista_alumnos_grupal_2" name="lista_alumnos_grupal">
+            </div>
+            <br>
+            <div class="form-group">
+                <label class="form-label p-2" for="grupo_3">Grupo 3</label>
+                <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="grupo_3" name="grupo">
+            </div>
+            <div class="form-group">
+                <label class="form-label p-2" for="unidad_3">Unidad de aprendizaje impartida</label>
+                <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="unidad_3" name="unidad">
+            </div>
+            <div class="form-group">
+                <label class="form-label p-2" for="carrera_3">Carrera</label>
+                <select class="form-control text-dark" style="background-color: lightgray;" id="carrera_3" name="carrera">
+                    <option value="isc">Ingeniería en Sistemas Computacionales</option>
+                    <option value="iia">Ingeniería en Inteligencia Artificial</option>
+                    <option value="lcd">Licenciatura en Ciencia de Datos</option>
+                    <option value="isisa">ISISA</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label p-2" for="numero_hombres_grupal_3">Número de hombres</label>
+                <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="numero_hombres_grupal_3" name="numero_hombres_grupal">
+            </div>
+            <div class="form-group">
+                <label class="form-label p-2" for="numero_mujeres_grupal_3">Número de mujeres</label>
+                <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="numero_mujeres_grupal_3" name="numero_mujeres_grupal">
+            </div>
+            <div class="form-group">
+                <label class="form-label p-2" for="lista_alumnos_grupal_1">Incluya la liga al archivo con la lista de alumnos</label>
+                <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="lista_alumnos_grupal_1" name="lista_alumnos_grupal">
+            </div>
+            <br>
+        </li>
+        <li class="list-group-item" name = "tutoria_pares">
+            <p><b>Alumno Asesor (Para tutoria entre pares)</b></p>
+            <p>En el caso de que considere a uno o dos alumnos como alumnos asesores o alumnos tutores favor de registar númeor de boleta y nombre del mismo.</p><br>
+            <p>Recuerde que el alumno asesor lo auxiliará a usted proporcionando tutoría a sus compañeros de clase sobre algún tema de la Unidad de Aprendizaje que usted imparte.</p>
+            <div class="form-group">
+                <label class="form-label p-2" for="nombre_alumno_asesor_1">Nombre del alumno asesor 1</label>
+                <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="nombre_alumno_asesor_1" name="nombre_alumno_asesor">
+            </div>
+            <div class="form-group">
+                <label class="form-label p-2" for="boleta_alumno_asesor_1">Boleta del alumno asesor 1</label>
+                <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="boleta_alumno_asesor_1" name="boleta_alumno_asesor">
+            </div>
+            <div class="form-group">
+                <label class="form-label p-2" for="nombre_alumno_asesor_2">Nombre del alumno asesor 2</label>
+                <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="nombre_alumno_asesor_2" name="nombre_alumno_asesor">
+            </div>
+            <div class="form-group">
+                <label class="form-label p-2" for="boleta_alumno_asesor_2">Boleta del alumno asesor 2</label>
+                <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="boleta_alumno_asesor_2" name="boleta_alumno_asesor">
+            </div>
+        </li>
+        <li class="list-group-item" name = "tutoria_individual">
+            <p><b>Tutoría Individual</b></p>
+            <p>Favor de incluir los números de boleta y nombre de los alumnos para tutoría individual máximo 10 alumnos tutorados.</p>
+            <div class="form-group">
+                <label class="form-label p-2" for="numero_hombres_individual">Número de hombres</label>
+                <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="numero_hombres_individual" name="numero_hombres_individual">
+            </div>
+            <div class="form-group">
+                <label class="form-label p-2" for="numero_mujeres_individual">Número de mujeres</label>
+                <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="numero_mujeres_individual" name="numero_mujeres_individual">
+            </div>
+            <div class="form-group">
+                <label class="form-label p-2" for="lista_alumnos_individual">Incluya la liga al archivo en formato PDF con la lista de alumnos</label>
+                <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="lista_alumnos_individual" name="lista_alumnos_individual">
+            </div>
+            <br>
+        </li>
+        <li class="list-group-item" name = "tutoria_movilidad">
+            <p><b>Tutoría para alumnos en movilidad</b></p>
+            <div class="form-group">
+                <label class="form-label p-2" for="nombre_alumnos_movilidad">Número de boleta y nombre del alumno o alumnos</label>
+                <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="nombre_alumnos_movilidad" name="nombre_alumnos_movilidad">
+            </div>
+            <div class="form-group">
+                <label class="form-label p-2" for="numero_hombres_movilidad">Número de hombres</label>
+                <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="numero_hombres_movilidad" name="numero_hombres_movilidad">
+            </div>
+            <div class="form-group">
+                <label class="form-label p-2" for="numero_mujeres_movilidad">Número de mujeres</label>
+                <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="numero_mujeres_movilidad" name="numero_mujeres_movilidad">
+            </div>
+            <br>
+        </li>
+        <li class="list-group-item" name = "tutoria_regularizacion">
+            <p><b>Tutoría de regularización</b></p>
+            <p>Favor de indicar Unidad de Aprendizaje, carrera y alumno asesor en caso de tenerlo</p>
+            <div class="form-group">
+                <label class="form-label p-2" for="unidad_regularizacion">Unidad de aprendizaje a regularizar</label>
+                <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="unidad_regularizacion" name="unidad_regularizacion">
+            </div>
+            <div class="form-group">
+                <label class="form-label p-2" for="carrera_regularizacion">Carrera</label>
+                <select class="form-control text-dark" style="background-color: lightgray;" id="carrera_regularizacion" name="carrera_regularizacion">
+                    <option value="isc">Ingeniería en Sistemas Computacionales</option>
+                    <option value="iia">Ingeniería en Inteligencia Artificial</option>
+                    <option value="lcd">Licenciatura en Ciencia de Datos</option>
+                    <option value="isisa">ISISA</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label p-2" for="numero_hombres_regularizacion">Número de hombres</label>
+                <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="numero_hombres_regularizacion" name="numero_hombres_regularizacion">
+            </div>
+            <div class="form-group">
+                <label class="form-label p-2" for="numero_mujeres_regularizacion">Número de mujeres</label>
+                <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="numero_mujeres_regularizacion" name="numero_mujeres_regularizacion">
+            </div>
+            <div class="form-group">
+                <label class="form-label p-2" for="lista_alumnos_regularizacion">Incluya la liga al archivo en formato PDF con la lista de alumnos</label>
+                <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="lista_alumnos_regularizacion" name="lista_alumnos_regularizacion">
+            </div>
+            <br>
+        </li>
+        <li class="list-group-item" id="Seccion_Prog">
+            <!-- <h3>Programa a cursar</h3>
+            {{ formsPrograma.management_form }}
+            <div id="formularios prog">
+                {% for form in formsPrograma %}
+                    <div class="formulario prog">
+                        {{ form.as_p }}
+                    </div>
+                {% endfor %}
+            </div>
+            <div id='empty-form-prog' class='hidden'>{{ formsPrograma.empty_form.as_p }}</div>
+            <div><button id='agregar materia' type='button' class="btn btn-secondary">Añadir materia</button></div> -->
+        </li>
+        <button class="btn btn-primary">Guardar</button>
+    </ul>        
+</form>
+
+<script>
+    const addMateBtn = document.getElementById('agregar materia')
+    const totalNewFormsProg = document.querySelector("#id_form-TOTAL_FORMS")
+    addMateBtn.addEventListener('click', add_new_form_mate)
+
+    function add_new_form_mate(event) {
+        if (event) {
+            event.preventDefault()
+        }
+
+        const currentAntecedentes = document.getElementsByClassName('formulario prog')
+        let currentFormCount = currentAntecedentes.length
+
+        const formCopyTarget = document.getElementById('formularios prog')
+        const copyEmptyFormEL = document.getElementById('empty-form-prog').cloneNode(true)
+        copyEmptyFormEL.setAttribute('class', 'formulario prog')
+        copyEmptyFormEL.setAttribute('id', `form-${currentFormCount}`)
+        const regex = new RegExp('__prefix__', 'g')
+        copyEmptyFormEL.innerHTML = copyEmptyFormEL.innerHTML.replace(regex,
+        currentFormCount)
+        totalNewFormsProg.setAttribute('value', currentFormCount + 1)
+        formCopyTarget.append(copyEmptyFormEL)
+    }
+</script>
+{% endblock %}
