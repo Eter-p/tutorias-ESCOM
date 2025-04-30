@@ -1,0 +1,76 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+
+<div class="row">
+    <div>
+        <h1 class="display-5 text-center">Ha ocurrido un error durante la operación</h1>
+        <br>
+        <p>{error}</p>
+        <button> Regresar</button>
+        {% if tipo == "actualizacion" %}
+            <h1 class="display-5 text-center">Ha ocurrido un error durante la actualización</h1>
+            <div class="text-center"><a href="/" class="btn btn-outline-primary"> Ir al inicio </a></div>
+            
+        {% elif tipo == "inscripcion" %}
+            <h1 class="display-5 text-center">Se detectó un formulario existente</h1>
+            <br>
+            <h5>
+                Se detectó que ya se tiene un registro de este formulario.<br>
+                ¿Desea modificar el formulario existente?<br>
+            </h5>
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="control" value="regresar" id="flexRadioDefault1" checked>
+                    <label class="form-check-label" for="flexRadioDefault1">
+                        Regresar al menú principal
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="control" value="modificar" id="flexRadioDefault2">
+                    <label class="form-check-label" for="flexRadioDefault2">
+                        Modificar formulario existente
+                    </label>
+                </div>
+                <br>
+                <p>
+                    Nota: Tome en cuenta que al modificar el formulario se requerirá que los directores y jefe de área vuelvan a firmar el formulario si ya ha sido firmado.
+                </p>            
+                <button type="submit" class="btn btn-primary">Continuar</button>
+            </form>
+        {% elif tipo == "invalid" %}
+            <h1 class="display-5 text-center">Ha ocurrido un error durante el registro</h1>
+            <h3 class="display-5 text-center">Posible entrada de datos invalida</h3>
+            <div class="text-center"><a href="/" class="btn btn-outline-primary"> Ir al inicio </a></div>
+        {% elif tipo == "reinscripcion" %}
+            <h1 class="display-5 text-center">Se detectó un formulario existente</h1>
+            <br>
+            <h5>
+                Se detectó que ya se tiene un registro de este formulario.<br>
+                ¿Desea modificar el formulario existente?<br>
+            </h5>
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="control" value="regresar" id="flexRadioDefault1" checked>
+                    <label class="form-check-label" for="flexRadioDefault1">
+                        Regresar al menú principal
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="control" value="modificar" id="flexRadioDefault2">
+                    <label class="form-check-label" for="flexRadioDefault2">
+                        Modificar formulario existente
+                    </label>
+                </div>
+                <br>
+                <p>
+                    Nota: Tome en cuenta que al modificar el formulario se requerirá que los directores y jefe de área vuelvan a firmar el formulario si ya ha sido firmado.
+                </p>            
+                <button type="submit" class="btn btn-primary">Continuar</button>
+            </form>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

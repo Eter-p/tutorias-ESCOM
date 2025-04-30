@@ -1,0 +1,88 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+
+<h1 class="text-center">TUTORÍAS DE RECUPERACIÓN</h1>
+<h1>{{error}}</h1>
+<ul class="list-group">
+    <li class="list-group-item">
+        {% if user.is_authenticated %}
+            <a href="/administrador" class="btn btn-outline-primary"> Regresar </a><br><br>
+            <ul>
+                {% for profesor, tutorias in lista_profesores.items %}
+                    <li class="card shadow-sm mb-4">
+                        <strong class="card-header bg-primary text-white fw-bold">Profesor(a):{{ profesor.nombre }}</strong> 
+                        <ul>
+                            {% for tutoria in tutorias %}
+                                <li>
+                                    <p><strong>Unidad de aprendizaje:</strong> {{ tutoria.unidad_aprendizaje_recuperacion }}</p>
+                                    <p><strong>Carrera:</strong>
+                                        {% if tutoria.carrera_recuperacion  == "isc" %}
+                                            Ingeniería en Sistemas Computacionales
+                                        {% elif tutoria.carrera_recuperacion == "iia" %}
+                                            Ingeniería en Inteligencia Artificial
+                                        {% elif tutoria.carrera_recuperacion == "lcd" %}
+                                            Licenciatura en Ciencia de Datos
+                                        {% else %}
+                                            {{ tutoria.carrera_recuperacion }}
+                                        {% endif %}
+                                    </p>
+                                    <p><strong>Número de hombres:</strong> {{ tutoria.no_hombres_recuperacion }}</p>
+                                    <p><strong>Número de mujeres:</strong> {{ tutoria.no_mujeres_recuperacion }}</p>
+                                    <p><a class="btn btn-outline-primary w-10" target="_blank" href="{{ tutoria.lista_alumnos_recuperacion }}">Lista de Alumnos</a></p>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </li>
+</ul>        
+
+{% if not user.is_staff %}
+    <form action="/solicitud/cancelar" method="post">
+        {% csrf_token %}
+        <button class="btn btn-secondary">Cancelar</button>
+    </form>
+{% endif %}
+
+
+<script>
+    document.getElementById("toggleTutoRegu").addEventListener("click", function() {
+        var div_regu = document.getElementById("tutoriaRegularizacion");
+        var unidad = document.getElementById("unidad_regularizacion");
+        var carrera = document.getElementById("carrera_regularizacion");
+        var n_hombres_rg = document.getElementById("numero_hombres_regularizacion");
+        var n_mujeres_rg = document.getElementById("numero_mujeres_regularizacion");
+        var liga_rg = document.getElementById("lista_alumnos_regularizacion");
+
+        var estiloActual = window.getComputedStyle(div_regu).display;
+        if (estiloActual=== "none") {
+            div_regu.style.display = "block";
+            this.textContent = "Cancelar registro";
+            this.className = "btn btn-danger";
+            this.value = "ocultar";
+        } else {
+            div_regu.style.display = "none";
+            this.textContent = "Registrar Tutoría";
+            this.className = "btn btn-success";
+            this.value = "mostrar";
+        }
+        if (unidad.hasAttribute("required")) {
+            unidad.removeAttribute("required");
+            carrera.removeAttribute("required");
+            n_hombres_rg.removeAttribute("required");
+            n_mujeres_rg.removeAttribute("required");
+            liga_rg.removeAttribute("required");
+        } else {
+            unidad.setAttribute("required", "required");
+            carrera.setAttribute("required", "required");
+            n_hombres_rg.setAttribute("required", "required");
+            n_mujeres_rg.setAttribute("required", "required");
+            liga_rg.setAttribute("required", "required");
+        }
+    });
+</script>
+{% endblock %}
+
+

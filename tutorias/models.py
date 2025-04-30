@@ -29,6 +29,7 @@ class TutoriaPares(models.Model):
     tutoria = models.ForeignKey(Tutorias,on_delete=models.CASCADE,default=None)
     nombre_pares = models.CharField(max_length=100)
     boleta_pares = models.CharField(max_length=12)
+    unidad_pares = models.CharField(max_length=100,blank=True)
 
     def __str__(self):
         return f"{self.tutoria}"
@@ -67,6 +68,20 @@ class TutoriaRegularizacion(models.Model):
     no_hombres_regularizacion = models.SmallIntegerField()
     no_mujeres_regularizacion = models.SmallIntegerField()
     lista_alumnos_regularizacion = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f"{self.tutoria}"
+    class Meta:
+        verbose_name = "Tutoría de Regularización"
+        verbose_name_plural = "Tutorías de Regularización"
+
+class TutoriaRecuperacion(models.Model):
+    tutoria = models.ForeignKey(Tutorias,on_delete=models.CASCADE,default=None)
+    unidad_aprendizaje_recuperacion = models.CharField(max_length=100)
+    carrera_recuperacion = models.CharField(max_length=100)
+    no_hombres_recuperacion = models.SmallIntegerField()
+    no_mujeres_recuperacion = models.SmallIntegerField()
+    lista_alumnos_recuperacion = models.CharField(max_length=100)
 
     def __str__(self):
         return f"{self.tutoria}"

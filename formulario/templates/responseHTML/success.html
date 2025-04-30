@@ -1,0 +1,32 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+
+<div class="row">
+    <div class="col-md-8 offset-md-3">
+        <h2 class="display-5">Operación realizada con exito</h2>
+        <br>
+    </div>
+    {% if tipo == "actualizacion"%}
+        <div class="col-md-8 offset-md-3">
+            <h2>Actualización de datos completada</h2>
+            <a href="/" class="btn btn-outline-primary"> Ir al inicio </a>
+        </div>
+    {% elif tipo == "inscripcion" %}
+        <div class="col-md-8 offset-md-3">
+            <h2>Proceso de inscripción completado</h2>
+            <a href="/" class="btn btn-outline-primary"> Ir al inicio </a>
+        </div>
+    {% elif tipo == "reinscripcion" %}
+    <div class="col-md-8 offset-md-3">
+        <h2>Proceso de reinscripción completado</h2>
+        <a href="/" class="btn btn-outline-primary"> Ir al inicio </a>
+    </div>
+    {% elif tipo == "firma" %}
+        <div class="col-md-8 offset-md-3">
+            <h2>Firma guardada</h2>
+            <a href="/solicitud/inscripcion/firmas/pendiente" class="btn btn-outline-primary"> Regresar </a>
+        </div>
+    {% endif %}
+</div>
+
+{% endblock %}

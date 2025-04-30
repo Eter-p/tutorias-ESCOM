@@ -16,10 +16,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from formulario import views
+from formulario import views as vf
+from tutorias import views as vt
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('',views.formulario,name="inicio"),
-    path('formulario/',views.formulario,name="formulario")
+    path('',vf.formulario,name="inicio"),
+    path('administrador/',vf.administrador,name="administrador"),
+    path('administrador/tutoria/<str:tipo>',vt.lista_tutorias,name="lista_tutorias"),
+    path('formulario/',vf.formulario,name="formulario"),
+    path('signin/',vf.signin,name="signin"),
+    path('logout/',vf.signout,name="logout"),
 ]

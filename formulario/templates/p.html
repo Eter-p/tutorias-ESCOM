@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listado de Tutorías</title>
+    <!-- Enlace a Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            justify-content: center;
+        }
+        .btn-square {
+            width: 100px; /* Definimos un tamaño cuadrado */
+            height: 100px;
+            font-size: 14px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.2s ease, background 0.3s;
+        }
+        .btn-square:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="bg-light text-center">
+
+    <div class="container mt-5">
+        <h2 class="mb-4">Listado de Tutorías</h2>
+
+        <div class="button-grid">
+            <button class="btn btn-primary btn-square" onclick="window.location.href='#grupales'">Grupales</button>
+            <button class="btn btn-success btn-square" onclick="window.location.href='#individuales'">Individuales</button>
+            <button class="btn btn-warning btn-square" onclick="window.location.href='#entre-pares'">Entre Pares</button>
+            <button class="btn btn-danger btn-square" onclick="window.location.href='#recuperacion'">Recuperación</button>
+            <button class="btn btn-dark btn-square" onclick="window.location.href='#regularizacion'">Regularización</button>
+            <button class="btn btn-info btn-square" onclick="window.location.href='#movilidad'">Movilidad</button>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS (opcional, si necesitas funcionalidades interactivas) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
