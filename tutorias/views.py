@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from formulario.models import Profesor
 from .models import TutoriaGrupal,TutoriaIndividual,TutoriaPares,TutoriaRecuperacion,TutoriaMovilidad,TutoriaRegularizacion
 
 def lista_tutorias(request,tipo):
@@ -21,15 +22,19 @@ def lista_tutorias(request,tipo):
         tipo_tutoria = TutoriaRegularizacion
         template = "regularizacion.html"
 
+    query = request.GET.get("q", "")
+    resultados = Profesor.objects.filter(nombre__icontains=query) if query else Profesor.objects.all()
     lista_profesores = {}
-
+    tipo_tutoria
     for instancia in tipo_tutoria.objects.select_related('tutoria__profesor'):
         profesor = instancia.tutoria.profesor
-        if profesor not in lista_profesores:
-            lista_profesores[profesor] = []
-        lista_profesores[profesor].append(instancia)
+        if (resultados.filter(nombre=profesor).exists()):
+            if profesor not in lista_profesores:
+                lista_profesores[profesor] = []
+            lista_profesores[profesor].append(instancia)
 
     return render(request,template,{
         "lista_profesores": lista_profesores,
-		'NOTA': "HOLA MUNDO",
+        'query':query
 	})
+    
