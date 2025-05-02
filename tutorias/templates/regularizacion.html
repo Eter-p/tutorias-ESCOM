@@ -7,10 +7,28 @@
     <li class="list-group-item">
         {% if user.is_authenticated %}
             <p><a href="/administrador" class="btn btn-outline-primary"> Regresar </a></p>
-            <form method="GET" class="input-group m-3" style="padding-right: 500px;">
-                <input type="text" class="form-control text-dark" name="q" value="{{ query }}" placeholder="Buscar profesor...">
-                <button type="submit" class="btn btn-outline-primary">Buscar</button>
-            </form>
+            <div class="row mb-3">
+                <div class="col">
+                    <form method="GET" class="input-group m-3" style="padding-right: 100px;">
+                        <input type="text" class="form-control text-dark" name="q" value="{{ query }}" placeholder="Buscar profesor...">
+                        <button type="submit" class="btn btn-outline-primary">Buscar</button>
+                    </form>
+                    <a class="btn btn-outline-danger ms-3 mt-3" href="/administrador/tutoria/regularizacion">Borrar busqueda y filtros</a>
+                </div>
+                <div class="col">
+                    <form method="POST">
+                        {% csrf_token %}
+                        <p>
+                            <label class="form-label">Seleccionar carreras:</label>
+                            <button type="submit" class="btn btn-outline-primary ms-4">Filtrar</button>
+                        </p>
+                        <input type="checkbox" name="carreras" value="isc" {% if "isc" in carreras_check %} checked {% endif %}> Ingeniería en Sistemas Computacionales<br>
+                        <input type="checkbox" name="carreras" value="iia" {% if "iia" in carreras_check %} checked {% endif %}> Ingeniería en Inteligencia Artificial<br>
+                        <input type="checkbox" name="carreras" value="lcd" {% if "lcd" in carreras_check %} checked {% endif %}> Licenciatura en Ciencia de Datos<br>
+                        <input type="checkbox" name="carreras" value="isisa" {% if "isisa" in carreras_check %} checked {% endif %}> ISISA<br>
+                    </form>
+                </div>
+            </div>
             <ul>
                 <li class="list-group-item">
                     <p><b>Total de profesores: {{lista_profesores|length}}</b> </p>
@@ -29,6 +47,8 @@
                                             Ingeniería en Inteligencia Artificial
                                         {% elif tutoria.carrera_regularizacion == "lcd" %}
                                             Licenciatura en Ciencia de Datos
+                                        {% elif tutoria.carrera_regularizacion == "isisa" %}
+                                            ISISA
                                         {% else %}
                                             {{ tutoria.carrera_regularizacion }}
                                         {% endif %}

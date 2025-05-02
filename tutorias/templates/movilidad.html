@@ -21,21 +21,9 @@
                         <ul>
                             {% for tutoria in tutorias %}
                                 <li>
-                                    <p><strong>Grupo:</strong> {{ tutoria.grupo }}</p>
-                                    <p><strong>Materia:</strong> {{ tutoria.unidad_aprendizaje }}</p>
-                                    <p><strong>Carrera:</strong>
-                                        {% if tutoria.carrera  == "isc" %}
-                                            Ingeniería en Sistemas Computacionales
-                                        {% elif tutoria.carrera == "iia" %}
-                                            Ingeniería en Inteligencia Artificial
-                                        {% elif tutoria.carrera == "lcd" %}
-                                            Licenciatura en Ciencia de Datos
-                                        {% else %}
-                                            {{ tutoria.carrera }}
-                                        {% endif %}
-                                    </p>
-                                    <p><strong>Número de hombres:</strong> {{ tutoria.no_hombres_grupal }}</p>
-                                    <p><strong>Número de mujeres:</strong> {{ tutoria.no_mujeres_grupal }}</p>
+                                    <p><strong>Boleta nombre</strong>{{ tutoria.boleta_nombre }}</p>
+                                    <p><strong>Número de hombres:</strong> {{ tutoria.no_hombres_movilidad }}</p>
+                                    <p><strong>Número de mujeres:</strong> {{ tutoria.no_mujeres_movilidad }}</p>
                                     <p><a class="btn btn-outline-primary w-10" target="_blank" href="{{ tutoria.lista_alumnos_grupal }}">Lista de Alumnos</a></p>
                                 </li>
                             {% endfor %}
