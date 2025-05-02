@@ -1,7 +1,6 @@
 {% extends "layouts/base.html" %}
 {% block content %}
-
-<h1 class="display-6 p-1">Formulario para el pre-registro de Tutorías</h1><br>
+<p><h1 class="display-6 p-1">Formulario para el pre-registro de Tutorías</h1></p>
 <!-- Mensaje de error -->
 {% if tipo == "falta_datos" %}
     <h6>Faltan campos por llenar favor de revisar</h6>
@@ -72,9 +71,8 @@
                     <label class="form-label p-2" for="lista_alumnos_grupal_1">Incluya la liga al archivo con la lista de alumnos <b class="text-danger">*</b></label>
                     <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="lista_alumnos_grupal_1" name="lista_alumnos_grupal">
                 </div>
-                <br>
                 <div class="form-group">
-                    <label class="form-label p-2" for="grupo_2">Grupo 2</label>
+                    <label class="form-label px-2 pb-2 py-5" for="grupo_2">Grupo 2</label>
                     <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="grupo_2" name="grupo">
                 </div>
                 <div class="form-group">
@@ -102,9 +100,8 @@
                     <label class="form-label p-2" for="lista_alumnos_grupal_2">Incluya la liga al archivo con la lista de alumnos</label>
                     <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="lista_alumnos_grupal_2" name="lista_alumnos_grupal">
                 </div>
-                <br>
                 <div class="form-group">
-                    <label class="form-label p-2" for="grupo_3">Grupo 3</label>
+                    <label class="form-label px-2 pb-2 py-5" for="grupo_3">Grupo 3</label>
                     <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="grupo_3" name="grupo">
                 </div>
                 <div class="form-group">
@@ -132,7 +129,6 @@
                     <label class="form-label p-2" for="lista_alumnos_grupal_1">Incluya la liga al archivo con la lista de alumnos</label>
                     <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="lista_alumnos_grupal_1" name="lista_alumnos_grupal">
                 </div>
-            <br>
             </div>
         </li>
 <!---------------------------------------------------------------------------------------------------------->
@@ -146,7 +142,7 @@
                 </div>
             </div>
             <div id="tutoriaPares" class="d-none">
-                <p>En el caso de que considere a uno o dos alumnos como alumnos asesores o alumnos tutores favor de registar númeor de boleta y nombre del mismo.</p><br>
+                <p>En el caso de que considere a uno o dos alumnos como alumnos asesores o alumnos tutores favor de registar númeor de boleta y nombre del mismo.</p>
                 <p>Recuerde que el alumno asesor lo auxiliará a usted proporcionando tutoría a sus compañeros de clase sobre algún tema de la Unidad de Aprendizaje que usted imparte.</p>
                 <div class="form-group">
                     <label class="form-label p-2" for="nombre_alumno_asesor_1">Nombre del alumno asesor 1 <b class="text-danger">*</b></label>

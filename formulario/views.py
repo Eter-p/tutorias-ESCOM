@@ -10,7 +10,7 @@ from django.shortcuts import render,redirect,get_object_or_404
 from .forms import FormProfesor
 from .models import Profesor
 from .utils import falta_datos,listar_alumnos
-from tutorias.models import Tutorias,TutoriaGrupal,TutoriaPares,TutoriaIndividual,TutoriaMovilidad,TutoriaRegularizacion
+from tutorias.models import Tutorias,TutoriaGrupal,TutoriaPares,TutoriaIndividual,TutoriaMovilidad,TutoriaRegularizacion,TutoriaRecuperacion
 
 def administrador(request):
     return render(request,"administrador.html")
@@ -148,13 +148,13 @@ def formulario(request):
                 tipo = "Recuperación",
                 profesor = profesor_form
             )
-            tuto_recuperacion = TutoriaRegularizacion.objects.create(
+            tuto_recuperacion = TutoriaRecuperacion.objects.create(
                 tutoria = tutoria,
-                unidad_aprendizaje_recuperación = request.POST.get("unidad_recuperación"),
-                carrera_recuperación = request.POST.get("carrera_recuperación"),
-                no_hombres_recuperación = request.POST.get("numero_hombres_recuperación"),
-                no_mujeres_recuperación = request.POST.get("numero_mujeres_recuperación"),
-                lista_alumnos_recuperación = request.POST.get("lista_alumnos_recuperación")
+                unidad_aprendizaje_recuperacion = request.POST.get("unidad_recuperacion"),
+                carrera_recuperacion = request.POST.get("carrera_recuperacion"),
+                no_hombres_recuperacion = request.POST.get("numero_hombres_recuperacion"),
+                no_mujeres_recuperacion = request.POST.get("numero_mujeres_recuperacion"),
+                lista_alumnos_recuperacion = request.POST.get("lista_alumnos_recuperacion")
             )
             tuto_recuperacion.save()
         return render(request,"responseHTML/success.html",{"tipo":"registro"})

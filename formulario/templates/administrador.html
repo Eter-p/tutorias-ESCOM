@@ -20,20 +20,22 @@
 	<div class="row align-items-start">
 		{% if user.is_authenticated %}
 			<div class="card col-md-3 " >
-				<br><br><br><br>
-				<a class="list-group-item btn btn-outline-secondary border border-dark" target="_blank" rel="noopener noreferrer" href="/admin">
-					<h5 class="mb-3">Ir al panel de administrador</h5>
-				</a>
-				<br>
-				<a class="list-group-item btn btn-outline-secondary border border-dark" target="_blank" rel="noopener noreferrer" href="/logout">
-					<h5 class="mb-3">Cerrar Sesión</h5>
-				</a>
+				<div style="margin-top: 100px;">
+					<a class="list-group-item btn btn-outline-secondary border border-dark rounded-2" target="_blank" rel="noopener noreferrer" href="/admin">
+						<h5 class="mb-3">Ir al panel de administrador</h5>
+					</a>
+				</div>
+				<div class="py-4">
+					<a class="list-group-item btn btn-outline-secondary border border-dark rounded-2" target="_blank" rel="noopener noreferrer" href="/logout">
+						<h5 class="mb-3">Cerrar Sesión</h5>
+					</a>
+				</div>
 			</div>
 			<div class="col">
 				<div class="card card-body text-center align-items-center">
-					<h1 class="display-4">Listado de Tutorías</h1><br><br>
-					<div class="container"></div>
-						<div class="row" >
+					<p><h1 class="display-4">Listado de Tutorías</h1></p>
+					<div class="container py-3"></div>
+						<div class="row pb-4" >
 							<div class="col">
 								<a class="list-group-item btn btn-outline-primary btn-square border border-dark rounded-3" href="/administrador/tutoria/grupal">
 									<h5 class="mb-3">Grupales</h5>
@@ -50,7 +52,6 @@
 								</a>
 							</div>
 						</div>
-						<br>
 						<div class="row" >
 							<div class="col">
 								<a class="list-group-item btn btn-outline-primary btn-square border border-dark rounded-3" href="/administrador/tutoria/recuperacion">

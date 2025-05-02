@@ -9,7 +9,7 @@ admin.site.index_title = "Bienvenido al Administrador"
 
 class ProfesorAdmin(admin.ModelAdmin):
     form = FormProfesor
-    list_display = ("nombre",'correo','correo_institucional')
+    list_display = ('fecha',"nombre",'correo','correo_institucional')
     search_fields = ('nombre',)
 
 admin.site.register(Profesor,ProfesorAdmin)

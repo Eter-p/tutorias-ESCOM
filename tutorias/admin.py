@@ -1,7 +1,7 @@
 from django.contrib import admin
 
-from .models import Tutorias,TutoriaGrupal,TutoriaPares,TutoriaIndividual,TutoriaMovilidad,TutoriaRegularizacion
-from .forms import FormTutorias,FormTutoriaGrupal,FormTutoriaPares,FormTutoriaIndividual,FormTutoriaMovilidad,FormTutoriaRegularizacion
+from .models import Tutorias,TutoriaGrupal,TutoriaPares,TutoriaIndividual,TutoriaMovilidad,TutoriaRegularizacion,TutoriaRecuperacion
+from .forms import FormTutorias,FormTutoriaGrupal,FormTutoriaPares,FormTutoriaIndividual,FormTutoriaMovilidad,FormTutoriaRegularizacion,FormTutoriaRecuperacion
 
 class TutoriasAdmin(admin.ModelAdmin):
     form = FormTutorias
@@ -36,6 +36,11 @@ class TutoriaRegularizacionAdmin(admin.ModelAdmin):
     search_fields = ("tutoria__profesor__nombre","unidad_aprendizaje_regularizacion")
     list_filter = ("carrera_regularizacion",)
 
+class TutoriaRecuperacionAdmin(admin.ModelAdmin):
+    form = FormTutoriaRecuperacion
+    list_display = ("tutoria","unidad_aprendizaje_recuperacion","carrera_recuperacion","no_hombres_recuperacion","no_mujeres_recuperacion","lista_alumnos_recuperacion")
+    search_fields = ("tutoria__profesor__nombre","unidad_aprendizaje_recuperacion")
+    list_filter = ("carrera_recuperacion",)
 
 admin.site.register(Tutorias,TutoriasAdmin)
 admin.site.register(TutoriaGrupal,TutoriaGrupalAdmin)
@@ -43,3 +48,4 @@ admin.site.register(TutoriaPares,TutoriaParesAdmin)
 admin.site.register(TutoriaIndividual,TutoriaIndividuaAdmin)
 admin.site.register(TutoriaMovilidad,TutoriaMovilidadAdmin)
 admin.site.register(TutoriaRegularizacion,TutoriaRegularizacionAdmin)
+admin.site.register(TutoriaRecuperacion,TutoriaRecuperacionAdmin)

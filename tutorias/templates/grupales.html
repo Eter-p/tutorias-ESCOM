@@ -6,7 +6,7 @@
 <ul class="list-group">
     <li class="list-group-item">
         {% if user.is_authenticated %}
-            <a href="/administrador" class="btn btn-outline-primary"> Regresar </a><br><br>
+            <p><a href="/administrador" class="btn btn-outline-primary"> Regresar </a></p>
             <ul>
                 {% for profesor, tutorias in lista_profesores.items %}
                     <li class="card shadow-sm mb-4">

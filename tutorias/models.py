@@ -86,5 +86,5 @@ class TutoriaRecuperacion(models.Model):
     def __str__(self):
         return f"{self.tutoria}"
     class Meta:
-        verbose_name = "Tutoría de Regularización"
-        verbose_name_plural = "Tutorías de Regularización"
+        verbose_name = "Tutoría de Recuperación"
+        verbose_name_plural = "Tutorías de Recuperación"

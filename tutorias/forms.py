@@ -1,5 +1,5 @@
 from django import forms
-from .models import Tutorias,TutoriaGrupal,TutoriaPares,TutoriaIndividual,TutoriaMovilidad,TutoriaRegularizacion
+from .models import Tutorias,TutoriaGrupal,TutoriaPares,TutoriaIndividual,TutoriaMovilidad,TutoriaRegularizacion,TutoriaRecuperacion
 
 class FormTutorias(forms.ModelForm):
     class Meta:
@@ -99,4 +99,24 @@ class FormTutoriaRegularizacion(forms.ModelForm):
             "no_hombres_regularizacion" : "Número de Mujeres",
             "no_mujeres_regularizacion" : "Número de Mujeres",
             "lista_alumnos_regularizacion" : "Lista de alumnos"
+        }
+
+class FormTutoriaRecuperacion(forms.ModelForm):
+    class Meta:
+        model = TutoriaRecuperacion
+        fields = [
+            "tutoria",
+            "unidad_aprendizaje_recuperacion",
+            "carrera_recuperacion",
+            "no_hombres_recuperacion",
+            "no_mujeres_recuperacion",
+            "lista_alumnos_recuperacion"
+        ]
+        labels = {
+            "tutoria": "Profesor",
+            "unidad_aprendizaje_recuperacion" : "Unidad de aprendizaje",
+            "carrera_recuperacion" : "Carrera",
+            "no_hombres_recuperacion" : "Número de Mujeres",
+            "no_mujeres_recuperacion" : "Número de Mujeres",
+            "lista_alumnos_recuperacion" : "Lista de alumnos"
         }
