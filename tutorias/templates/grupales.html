@@ -66,52 +66,8 @@
             </ul>
         {% endif %}
     </li>
-</ul>        
+</ul>
 
-{% if not user.is_staff %}
-    <form action="/solicitud/cancelar" method="post">
-        {% csrf_token %}
-        <button class="btn btn-secondary">Cancelar</button>
-    </form>
-{% endif %}
-
-
-<script>
-    document.getElementById("toggleTutoRegu").addEventListener("click", function() {
-        var div_regu = document.getElementById("tutoriaRegularizacion");
-        var unidad = document.getElementById("unidad_regularizacion");
-        var carrera = document.getElementById("carrera_regularizacion");
-        var n_hombres_rg = document.getElementById("numero_hombres_regularizacion");
-        var n_mujeres_rg = document.getElementById("numero_mujeres_regularizacion");
-        var liga_rg = document.getElementById("lista_alumnos_regularizacion");
-
-        var estiloActual = window.getComputedStyle(div_regu).display;
-        if (estiloActual=== "none") {
-            div_regu.style.display = "block";
-            this.textContent = "Cancelar registro";
-            this.className = "btn btn-danger";
-            this.value = "ocultar";
-        } else {
-            div_regu.style.display = "none";
-            this.textContent = "Registrar Tutoría";
-            this.className = "btn btn-success";
-            this.value = "mostrar";
-        }
-        if (unidad.hasAttribute("required")) {
-            unidad.removeAttribute("required");
-            carrera.removeAttribute("required");
-            n_hombres_rg.removeAttribute("required");
-            n_mujeres_rg.removeAttribute("required");
-            liga_rg.removeAttribute("required");
-        } else {
-            unidad.setAttribute("required", "required");
-            carrera.setAttribute("required", "required");
-            n_hombres_rg.setAttribute("required", "required");
-            n_mujeres_rg.setAttribute("required", "required");
-            liga_rg.setAttribute("required", "required");
-        }
-    });
-</script>
 {% endblock %}
 
 

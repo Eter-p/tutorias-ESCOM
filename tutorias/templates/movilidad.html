@@ -19,14 +19,21 @@
                     <li class="card shadow-sm mb-4">
                         <strong class="card-header bg-primary text-white fw-bold">Profesor(a):{{ profesor.nombre }}</strong> 
                         <ul>
-                            {% for tutoria in tutorias %}
-                                <li>
-                                    <p><strong>Boleta nombre</strong>{{ tutoria.boleta_nombre }}</p>
-                                    <p><strong>Número de hombres:</strong> {{ tutoria.no_hombres_movilidad }}</p>
-                                    <p><strong>Número de mujeres:</strong> {{ tutoria.no_mujeres_movilidad }}</p>
-                                    <p><a class="btn btn-outline-primary w-10" target="_blank" href="{{ tutoria.lista_alumnos_grupal }}">Lista de Alumnos</a></p>
-                                </li>
+                        {% for tutoria in tutorias%}
+                            {% for profe, alumnos in al.items %}
+                                {% if profe == profesor %}
+                                    {% for boleta,nombre in alumnos.items %}
+                                        <li>
+                                            <p><strong>Boleta del alumno: </strong>{{ boleta }}</p>
+                                            <p><strong>Nombre del alumno: </strong>{{ nombre }}</p>
+                                        </li>
+                                    {% endfor %}
+                                {% endif %}
                             {% endfor %}
+                                <p><strong>Número de hombres:</strong> {{ tutoria.no_hombres_movilidad }}</p>
+                                <p><strong>Número de mujeres:</strong> {{ tutoria.no_mujeres_movilidad }}</p>
+                                <p><a class="btn btn-outline-primary w-10" target="_blank" href="{{ tutoria.lista_alumnos_grupal }}">Lista de Alumnos</a></p>
+                        {% endfor %}
                         </ul>
                     </li>
                 {% endfor %}
@@ -34,51 +41,6 @@
         {% endif %}
     </li>
 </ul>        
-
-{% if not user.is_staff %}
-    <form action="/solicitud/cancelar" method="post">
-        {% csrf_token %}
-        <button class="btn btn-secondary">Cancelar</button>
-    </form>
-{% endif %}
-
-
-<script>
-    document.getElementById("toggleTutoRegu").addEventListener("click", function() {
-        var div_regu = document.getElementById("tutoriaRegularizacion");
-        var unidad = document.getElementById("unidad_regularizacion");
-        var carrera = document.getElementById("carrera_regularizacion");
-        var n_hombres_rg = document.getElementById("numero_hombres_regularizacion");
-        var n_mujeres_rg = document.getElementById("numero_mujeres_regularizacion");
-        var liga_rg = document.getElementById("lista_alumnos_regularizacion");
-
-        var estiloActual = window.getComputedStyle(div_regu).display;
-        if (estiloActual=== "none") {
-            div_regu.style.display = "block";
-            this.textContent = "Cancelar registro";
-            this.className = "btn btn-danger";
-            this.value = "ocultar";
-        } else {
-            div_regu.style.display = "none";
-            this.textContent = "Registrar Tutoría";
-            this.className = "btn btn-success";
-            this.value = "mostrar";
-        }
-        if (unidad.hasAttribute("required")) {
-            unidad.removeAttribute("required");
-            carrera.removeAttribute("required");
-            n_hombres_rg.removeAttribute("required");
-            n_mujeres_rg.removeAttribute("required");
-            liga_rg.removeAttribute("required");
-        } else {
-            unidad.setAttribute("required", "required");
-            carrera.setAttribute("required", "required");
-            n_hombres_rg.setAttribute("required", "required");
-            n_mujeres_rg.setAttribute("required", "required");
-            liga_rg.setAttribute("required", "required");
-        }
-    });
-</script>
 {% endblock %}
 
 

@@ -25,7 +25,8 @@ def lista_tutorias(request,tipo):
     query = request.GET.get("q", "")
     resultados = Profesor.objects.filter(nombre__icontains=query) if query else Profesor.objects.all()
     tutorias_filtradas = flitrar_datos(request,tipo_tutoria)
-    
+
+    alumnos_boletas = {}
     lista_profesores = {}
     for instancia in tutorias_filtradas:
         profesor = instancia.tutoria.profesor
@@ -34,10 +35,20 @@ def lista_tutorias(request,tipo):
                 lista_profesores[profesor] = []
             lista_profesores[profesor].append(instancia)
 
+            if tipo_tutoria == TutoriaMovilidad:
+                a_b = {}
+                for alu_bol in instancia.boleta_nombre.split(";"):
+                    alumno,boleta = alu_bol.split(",")
+                    a_b[alumno] = boleta
+                alumnos_boletas[profesor] = a_b
+    
+    
     return render(request,template,{
         "lista_profesores": lista_profesores,
         'carreras_check' : request.POST.getlist("carreras"),
-        'query':query
+        'query':query,
+        "al":alumnos_boletas,
+        "lista": ["x1","x2","x3"]
 	})
 
 def flitrar_datos(request,tipo_tutoria):
