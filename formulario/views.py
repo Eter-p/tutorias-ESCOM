@@ -12,8 +12,30 @@ from .models import Profesor
 from .utils import falta_datos,listar_alumnos
 from tutorias.models import Tutorias,TutoriaGrupal,TutoriaPares,TutoriaIndividual,TutoriaMovilidad,TutoriaRegularizacion,TutoriaRecuperacion
 
+@login_required
 def administrador(request):
-    return render(request,"administrador.html")
+    
+    tipos_tutorias = [TutoriaGrupal,TutoriaPares,TutoriaIndividual,TutoriaMovilidad,TutoriaRegularizacion,TutoriaRecuperacion]
+    totales_tutorias = ["total_grupales","total_individuales","total_pares","total_regularizacion","total_recuperacion","total_movilidad"]
+    
+    conteo_tutorias = {}
+    
+    for tipo_tutoria,total_turoria in zip(tipos_tutorias,totales_tutorias):
+        lista_profesores = []
+        for instancia in tipo_tutoria.objects.select_related('tutoria__profesor'):
+            profesor = instancia.tutoria.profesor
+            if profesor not in lista_profesores:
+                lista_profesores.append(profesor)
+        conteo_tutorias[total_turoria] = len(lista_profesores)
+        
+    return render(request,"administrador.html",{
+        "total_profesores": len(Profesor.objects.all()),
+        "totales_tutorias": conteo_tutorias
+    })
+
+def profesores(request):
+    return render(request,"profesores.html")
+
 
 #REGISTRO DEL PROFESOR Y SUS TUTORÍAS ----------------------------------------------------------
 def formulario(request):

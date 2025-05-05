@@ -24,6 +24,7 @@ urlpatterns = [
     path('',vf.formulario,name="inicio"),
     path('administrador/',vf.administrador,name="administrador"),
     path('administrador/tutoria/<str:tipo>/',vt.lista_tutorias,name="lista_tutorias"),
+    path('administrador/profesores/',vf.profesores,name="profesores"),
     path('formulario/',vf.formulario,name="formulario"),
     path('signin/',vf.signin,name="signin"),
     path('logout/',vf.signout,name="logout"),

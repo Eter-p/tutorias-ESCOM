@@ -3,18 +3,16 @@
 {% block content %}
 
 <style>
-	.btn-square {
-            width: 150px; /* Definimos un tamaño cuadrado */
-            height: 150px;
-            font-size: 14px;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 10px;
-            text-align: center;
-            transition: transform 0.2s ease, background 0.3s;
-        }
+.btn-square {
+		width: 150px; /* Definimos un tamaño cuadrado */
+		height: 150px;
+		font-size: 14px;
+		align-items: center;
+		justify-content: center;
+		border-radius: 10px;
+		text-align: center;
+		transition: transform 0.2s ease, background 0.3s;
+	}
 </style>
 <div class="container">
 	<div class="row align-items-start">
@@ -35,40 +33,54 @@
 				<div class="card card-body text-center align-items-center">
 					<p><h1 class="display-4">Listado de Tutorías</h1></p>
 					<div class="container py-3"></div>
+						<div class="row pb-4">
+							<div class="col">
+								<a class="list-group-item btn btn-outline-primary border border-dark rounded-3 p-1 pt-2" href="/administrador/profesores">
+									<h5 class="mb-3">Profesores registrados: {{total_profesores}}</h5>
+								</a>
+							</div>
+						</div>
 						<div class="row pb-4" >
-							<div class="col">
-								<a class="list-group-item btn btn-outline-primary btn-square border border-dark rounded-3" href="/administrador/tutoria/grupal">
+							<div class="col ">
+								<a class="list-group-item btn btn-outline-primary btn-square border border-dark rounded-3 py-5" href="/administrador/tutoria/grupal">
 									<h5 class="mb-3">Grupales</h5>
+									<p>Total: {{totales_tutorias.total_grupales}}</p>
 								</a>
 							</div>
 							<div class="col">
-								<a class="list-group-item btn btn-outline-primary btn-square border border-dark rounded-3" href="/administrador/tutoria/individual">
+								<a class="list-group-item btn btn-outline-primary btn-square border border-dark rounded-3 py-5" href="/administrador/tutoria/individual">
 									<h5 class="mb-3">Individuales</h5>
+									<p>Total: {{totales_tutorias.total_individuales}}</p>
 								</a>
 							</div>
 							<div class="col">
-								<a class="list-group-item btn btn-outline-primary btn-square border border-dark rounded-3" href="/administrador/tutoria/pares">
+								<a class="list-group-item btn btn-outline-primary btn-square border border-dark rounded-3 py-5" href="/administrador/tutoria/pares">
 									<h5 class="mb-3">Entre Pares</h5>
+									<p>Total: {{totales_tutorias.total_pares}}</p>
 								</a>
 							</div>
 						</div>
 						<div class="row" >
 							<div class="col">
-								<a class="list-group-item btn btn-outline-primary btn-square border border-dark rounded-3" href="/administrador/tutoria/recuperacion">
+								<a class="list-group-item btn btn-outline-primary btn-square border border-dark rounded-3 py-5" href="/administrador/tutoria/recuperacion">
 									<h5 class="mb-3">Recuperación</h5>
+									<p>Total: {{totales_tutorias.total_recuperacion}}</p>
 								</a>
 							</div>
 							<div class="col">
-								<a class="list-group-item btn btn-outline-primary btn-square border border-dark rounded-3" href="/administrador/tutoria/regularizacion">
+								<a class="list-group-item btn btn-outline-primary btn-square border border-dark rounded-3 py-5" href="/administrador/tutoria/regularizacion">
 									<h5 class="mb-3">Regularización</h5>
+									<p>Total: {{totales_tutorias.total_regularizacion}}</p>
 								</a>
 							</div>
 							<div class="col">
-								<a class="list-group-item btn btn-outline-primary btn-square border border-dark rounded-3" href="/administrador/tutoria/movilidad">
+								<a class="list-group-item btn btn-outline-primary btn-square border border-dark rounded-3 py-5" href="/administrador/tutoria/movilidad">
 									<h5 class="mb-3">Movilidad</h5>
+									<p>Total: {{totales_tutorias.total_movilidad}}</p>
 								</a>
 							</div>
 						</div>
+					</div>
 				</div>
 			</div>
 		{% else %}
