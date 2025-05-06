@@ -20,7 +20,7 @@
                         <strong class="card-header bg-primary text-white fw-bold">Profesor(a):{{ profesor.nombre }}</strong> 
                         <ul>
                         {% for tutoria in tutorias%}
-                            {% for profe, alumnos in al.items %}
+                            {% for profe, alumnos in alumnos_movilidad.items %}
                                 {% if profe == profesor %}
                                     {% for boleta,nombre in alumnos.items %}
                                         <li>
@@ -30,9 +30,9 @@
                                     {% endfor %}
                                 {% endif %}
                             {% endfor %}
-                                <p><strong>Número de hombres:</strong> {{ tutoria.no_hombres_movilidad }}</p>
-                                <p><strong>Número de mujeres:</strong> {{ tutoria.no_mujeres_movilidad }}</p>
-                                <p><a class="btn btn-outline-primary w-10" target="_blank" href="{{ tutoria.lista_alumnos_grupal }}">Lista de Alumnos</a></p>
+                            <p><strong>Número de hombres:</strong> {{ tutoria.no_hombres_movilidad }}</p>
+                            <p><strong>Número de mujeres:</strong> {{ tutoria.no_mujeres_movilidad }}</p>
+                            <p><a class="btn btn-outline-primary w-10" target="_blank" href="{{ tutoria.lista_alumnos_grupal }}">Lista de Alumnos</a></p>
                         {% endfor %}
                         </ul>
                     </li>

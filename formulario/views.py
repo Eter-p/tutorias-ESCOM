@@ -33,8 +33,40 @@ def administrador(request):
         "totales_tutorias": conteo_tutorias
     })
 
+@login_required
 def profesores(request):
-    return render(request,"profesores.html")
+    query = request.GET.get("q", "")
+    resultados = Profesor.objects.filter(nombre__icontains=query) if query else Profesor.objects.all()
+    if request.method == "GET":
+        return render(request,"profesores.html",{
+            "lista_profesores": resultados,
+            'query':query,
+            "mostrar":False
+        })
+    tipos_tutorias = [TutoriaGrupal,TutoriaPares,TutoriaIndividual,TutoriaMovilidad,TutoriaRegularizacion,TutoriaRecuperacion]
+    tt = ["grupal","pares","individual","movilidad","regularizacion","recuperacion"]
+    
+    profesor_seleccionado = request.POST.get("profesor_seleccionado")
+    pr = Profesor.objects.get(nombre=profesor_seleccionado)
+    
+    tutorias_asociadas = {}
+    for tutorias,t in zip(tipos_tutorias,tt):
+        tutorias_asociadas[f"tutoria_{t}"]=tutorias.objects.filter(tutoria__profesor=pr)
+    
+    movilidad = tutorias_asociadas["tutoria_movilidad"]
+    alumnos_movilidad = {}
+    if movilidad:
+        for alumno_m in movilidad[0].boleta_nombre.split(";"):
+            boleta,nombre = alumno_m.split(",")
+            alumnos_movilidad[boleta] = nombre
+    return render(request,"profesores.html",{
+        "lista_profesores": resultados,
+        "profesor_seleccionado":profesor_seleccionado,
+        "tutorias_asociadas":tutorias_asociadas,
+        "alumnos_movilidad": alumnos_movilidad,
+        'query':query,
+        "mostrar":True
+    })
 
 
 #REGISTRO DEL PROFESOR Y SUS TUTORÍAS ----------------------------------------------------------

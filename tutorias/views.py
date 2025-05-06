@@ -26,7 +26,7 @@ def lista_tutorias(request,tipo):
     resultados = Profesor.objects.filter(nombre__icontains=query) if query else Profesor.objects.all()
     tutorias_filtradas = flitrar_datos(request,tipo_tutoria)
 
-    alumnos_boletas = {}
+    alumnos_movilidad = {}
     lista_profesores = {}
     for instancia in tutorias_filtradas:
         profesor = instancia.tutoria.profesor
@@ -36,18 +36,18 @@ def lista_tutorias(request,tipo):
             lista_profesores[profesor].append(instancia)
 
             if tipo_tutoria == TutoriaMovilidad:
-                a_b = {}
-                for alu_bol in instancia.boleta_nombre.split(";"):
-                    alumno,boleta = alu_bol.split(",")
-                    a_b[alumno] = boleta
-                alumnos_boletas[profesor] = a_b
+                boletas_alumnos = {}
+                for boleta_alumno in instancia.boleta_nombre.split(";"):
+                    boleta,alumno = boleta_alumno.split(",")
+                    boletas_alumnos[boleta] = alumno
+                alumnos_movilidad[profesor] = boletas_alumnos
     
     
     return render(request,template,{
         "lista_profesores": lista_profesores,
         'carreras_check' : request.POST.getlist("carreras"),
         'query':query,
-        "al":alumnos_boletas,
+        "alumnos_movilidad":alumnos_movilidad,
         "lista": ["x1","x2","x3"]
 	})
 

@@ -2,7 +2,163 @@
 
 {% block content %}
 
-<div class="container">
-	<p>PROFESORES</p>
+<h1 class="text-center pb-5">LISTADO DE PROFESORES</h1>
+	
+</div>
+<div class="row">
+	<p><a href="/administrador" class="btn btn-outline-primary"> Regresar </a></p>
+	<div class="col">
+		<form method="GET" class="input-group m-3" style="padding-right: 100px;">
+			<input type="text" class="form-control text-dark" name="q" value="{{ query }}" placeholder="Buscar profesor...">
+			<button type="submit" class="btn btn-outline-primary">Buscar</button>
+		</form>
+	</div>
+	<div class="col">
+		<p class="pt-3"><a class="btn btn-outline-danger" href="/administrador/profesores">Borrar busqueda</a></p>
+	</div>
+</div>
+<div class="row">
+	<div class="col-4">
+		<form method="post" action="">
+			{% csrf_token %}
+			<h5>Nombre: </h5>
+			<div class="btn-group-vertical mx-5" role="group" aria-label="Vertical button group">
+				{% for profesor in lista_profesores %}
+					<button type="submit" class="btn btn-{% if profesor.nombre == profesor_seleccionado %}primary{% else %}outline-primary {% endif %} px-5" name="profesor_seleccionado" value="{{ profesor }}" >{{ profesor }}</button>
+				{% endfor %}
+			</div>
+		</form>
+	</div>
+	{% if mostrar %}
+		<div class="col">
+			<h5>Tutorías registradas: </h5>
+			{% for tipo,tutorias in tutorias_asociadas.items %}
+				{% if tutorias %}
+					<li class="card shadow-sm mb-4">
+
+					{% if tipo == "tutoria_grupal" %}
+						<strong class="card-header bg-primary text-white fw-bold">Tutorías grupales</strong>
+						<ul class="list-group">
+							{% for tutoria in tutorias %}
+								<li class="list-group-item border border-black">
+									<p><strong>Grupo:</strong> {{ tutoria.grupo }}</p>
+									<p><strong>Materia:</strong> {{ tutoria.unidad_aprendizaje }}</p>
+									<p><strong>Carrera:</strong>
+										{% if tutoria.carrera  == "isc" %}
+											Ingeniería en Sistemas Computacionales
+										{% elif tutoria.carrera == "iia" %}
+											Ingeniería en Inteligencia Artificial
+										{% elif tutoria.carrera == "lcd" %}
+											Licenciatura en Ciencia de Datos
+										{% elif tutoria.carrera == "isisa" %}
+											ISISA
+										{% else %}
+											{{ tutoria.carrera }}
+										{% endif %}
+									</p>
+									<p><strong>Número de hombres:</strong> {{ tutoria.no_hombres_grupal }}</p>
+									<p><strong>Número de mujeres:</strong> {{ tutoria.no_mujeres_grupal }}</p>
+									<p><a class="btn btn-outline-primary w-10" target="_blank" href="{{ tutoria.lista_alumnos_grupal }}">Lista de Alumnos</a></p>
+								</li>
+							{% endfor %}
+						</ul>
+					{% elif tipo == "tutoria_pares" %}
+						<strong class="card-header bg-primary text-white fw-bold">Tutorías entre pares</strong>
+						<ul class="list-group">
+                            {% for tutoria in tutorias %}
+								<li class="list-group-item border border-black">
+                                    <p><strong>Nombre del alumno asesor:</strong> {{ tutoria.nombre_pares }}</p>
+                                    <p><strong>Número de boleta del alumno asesor:</strong> {{ tutoria.boleta_pares }}</p>
+                                    <p><strong>Unidad de aprendizaje donde apoyará el alumno asesor:</strong> {{ tutoria.unidad_pares }}</p>
+                                </li>
+                            {% endfor %}
+                        </ul>
+					{% elif tipo == "tutoria_individual" %}
+						<strong class="card-header bg-primary text-white fw-bold">Tutorías individuales</strong>
+						<ul class="list-group">
+							{% for tutoria in tutorias %}
+								<li class="list-group-item border border-black">
+									<p><strong>Número de hombres:</strong> {{ tutoria.no_hombres_individual }}</p>
+									<p><strong>Número de mujeres:</strong> {{ tutoria.no_mujeres_individual }}</p>
+									<p><a class="btn btn-outline-primary w-10" target="_blank" href="{{ tutoria.lista_alumnos_individual }}">Lista de Alumnos</a></p>
+								</li>
+							{% endfor %}
+						</ul>
+					{% elif tipo == "tutoria_movilidad" %}
+						<strong class="card-header bg-primary text-white fw-bold">Tutorías de movilidad</strong>
+						<ul class="list-group">
+							{% for tutoria in tutorias %}
+								{% for boleta,nombre in alumnos_movilidad.items %}
+								<li class="list-group-item border border-black">
+									<p><strong>Boleta del alumno: </strong>{{ boleta }}</p>
+									<p><strong>Nombre del alumno: </strong>{{ nombre }}</p>
+								</li>
+								{% endfor %}
+								<li class="list-group-item border border-black">
+									<p><strong>Número de hombres:</strong> {{ tutoria.no_hombres_movilidad }}</p>
+									<p><strong>Número de mujeres:</strong> {{ tutoria.no_mujeres_movilidad }}</p>
+									<p><a class="btn btn-outline-primary w-10" target="_blank" href="{{ tutoria.lista_alumnos_grupal }}">Lista de Alumnos</a></p>
+								</li>
+							{% endfor %}
+						</ul>
+					{% elif tipo == "tutoria_regularizacion" %}
+						<strong class="card-header bg-primary text-white fw-bold">Tutorías de regularización</strong>
+						<ul class="list-group">
+							{% for tutoria in tutorias %}
+								<li class="list-group-item border border-black">
+									<p><strong>Unidad de aprendizaje:</strong> {{ tutoria.unidad_aprendizaje_regularizacion }}</p>
+									<p><strong>Carrera:</strong>
+										{% if tutoria.carrera_regularizacion  == "isc" %}
+											Ingeniería en Sistemas Computacionales
+										{% elif tutoria.carrera_regularizacion == "iia" %}
+											Ingeniería en Inteligencia Artificial
+										{% elif tutoria.carrera_regularizacion == "lcd" %}
+											Licenciatura en Ciencia de Datos
+										{% elif tutoria.carrera_regularizacion == "isisa" %}
+											ISISA
+										{% else %}
+											{{ tutoria.carrera_regularizacion }}
+										{% endif %}
+									</p>
+									<p><strong>Número de hombres:</strong> {{ tutoria.no_hombres_regularizacion }}</p>
+									<p><strong>Número de mujeres:</strong> {{ tutoria.no_mujeres_regularizacion }}</p>
+									<p><a class="btn btn-outline-primary w-10" target="_blank" href="{{ tutoria.lista_alumnos_regularizacion }}">Lista de Alumnos</a></p>
+								</li>
+						{% endfor %}
+						</ul>
+					{% elif tipo == "tutoria_recuperacion" %}
+						<strong class="card-header bg-primary text-white fw-bold">Tutorías de recuperación</strong>
+						<ul class="list-group">
+							{% for tutoria in tutorias %}
+								<li class="list-group-item border border-black">
+									<p><strong>Unidad de aprendizaje:</strong> {{ tutoria.unidad_aprendizaje_recuperacion }}</p>
+									<p><strong>Carrera:</strong>
+										{% if tutoria.carrera_recuperacion  == "isc" %}
+											Ingeniería en Sistemas Computacionales
+										{% elif tutoria.carrera_recuperacion == "iia" %}
+											Ingeniería en Inteligencia Artificial
+										{% elif tutoria.carrera_recuperacion == "lcd" %}
+											Licenciatura en Ciencia de Datos
+										{% elif tutoria.carrera_recuperacion == "isisa" %}
+											ISISA
+										{% else %}
+											{{ tutoria.carrera_recuperacion }}
+										{% endif %}
+									</p>
+									<p><strong>Número de hombres:</strong> {{ tutoria.no_hombres_recuperacion }}</p>
+									<p><strong>Número de mujeres:</strong> {{ tutoria.no_mujeres_recuperacion }}</p>
+									<p><a class="btn btn-outline-primary w-10" target="_blank" href="{{ tutoria.lista_alumnos_recuperacion }}">Lista de Alumnos</a></p>
+								</li>
+							{% endfor %}
+						</ul>
+					{% else %}
+						<p>{{tipo}}</p>
+						<p>Tutorías:{{tutorias}}</p>
+					{% endif %}
+				{% endif %}
+			{% endfor %}
+		</div>
+	{% endif %}
+	
 </div>
 {% endblock %}
