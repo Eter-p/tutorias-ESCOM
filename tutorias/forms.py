@@ -6,9 +6,11 @@ class FormTutorias(forms.ModelForm):
         model = Tutorias
         fields =[
             "tipo",
-            "profesor"
+            "profesor",
+            "fecha"
         ]
         labels = {
+            "fecha": "Fecha de registro",
             "tipo": "Tipo de tutoría",
             "profesor": "Profesor"
         }
@@ -41,12 +43,14 @@ class FormTutoriaPares(forms.ModelForm):
         fields = [
             "tutoria",
             "nombre_pares",
-            "boleta_pares"
+            "boleta_pares",
+            "unidad_pares"
         ]
         labels = {
             "tutoria": "Profesor",
             "nombre_pares" : "Nombres de los alumnos",
-            "boleta_pares" : "Boletas de los alumnos"
+            "boleta_pares" : "Boletas de los alumnos",
+            "unidad_pares" : "Unidad de aprendizaje",
         }
 
 class FormTutoriaIndividual(forms.ModelForm):

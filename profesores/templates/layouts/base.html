@@ -24,22 +24,23 @@
 				
 				<div class="collapse navbar-collapse" id="navbarNav">
 					<ul class="navbar-nav ms-auto">
-						{% if user.is_authenticated %}
+						{% if user.is_superuser %}
 							<li class="nav-item"><a class="nav-link active" href="/administrador">Inicio</a></li> 
-							<li class="nav-item">
-								<div class="dropdown">
-									<button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-										{{ user.first_name }}
-									</button>
-									<ul class="dropdown-menu">
-										<li><a class="dropdown-item" href="/logout">Cerrar Sesión</a></li>
-									</ul>
-								</div>
-							</li>
+							
 						{% else %}
 							<li class="nav-item"><a class="nav-link active" href="/">Inicio</a></li> 
-							<li class="nav-item"><a class="nav-link active" href="/signin">Administrador</a></li>
+							<li class="nav-item"><a class="nav-link active" href="/administrador">Administrador</a></li>
 						{% endif %}
+						<li class="nav-item">
+							<div class="dropdown" {% if user.is_authenticated %} {% else %} hidden {% endif %}>
+								<button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+									{{ user.username }}
+								</button>
+								<ul class="dropdown-menu">
+									<li><a class="dropdown-item" href="/logout">Cerrar Sesión</a></li>
+								</ul>
+							</div>
+						</li>
 					</ul>
 				</div>
 			</div>

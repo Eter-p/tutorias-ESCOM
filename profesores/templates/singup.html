@@ -1,0 +1,40 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+<div class="container my-3">
+    <div class="mx-auto p-1" style="width: 500px;">
+        <h2 class="text-center text-success">REGISTRAR USUARIO</h2>
+        <p class="text-danger">{{error}}</p>
+        <form action="/signup/" method="post" class="card border border-0">
+            {% csrf_token %}
+            <div class="form-group">
+                <label class="form-label p-2" for="nombre">Nombre del profesor tutor o profesora tutora <b class="text-danger">*</b></label>
+                <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="nombre" name="nombre" placeholder="Nombre completo" required>
+            </div>
+            
+            <div class="form-group">
+                <label  class="form-label p-2" for="correo_institucional">Correo electrónico Institucional <b class="text-danger">*</b></label>
+                <input type="email" class="form-control text-dark" style="background-color: lightgray;" id="correo_institucional" name="correo_institucional" required>
+            </div>
+            <div class="form-group">
+                <label  class="form-label p-2" for="correo_alterno">Correo electrónico Alterno</label>
+                <input type="email" class="form-control text-dark" style="background-color: lightgray;" id="correo_alterno" name="correo_alterno">
+            </div>
+            <div class="form-group">
+                <label class="form-label p-2" for="usuario">Nombre de usuario <b class="text-danger">*</b></label>
+                <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="usuario" name="usuario" placeholder="Solo letras, números, @, +, - y _" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label p-2" for="password1">Contraseña <b class="text-danger">*</b></label>
+                <input type="password" class="form-control text-dark" style="background-color: lightgray;" id="password1" name="password1" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label p-2" for="password2">Repetir contraseña <b class="text-danger">*</b></label>
+                <input type="password" class="form-control text-dark" style="background-color: lightgray;" id="password2" name="password2" required>
+            </div>
+            <button class="btn btn-success my-3">Registar</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

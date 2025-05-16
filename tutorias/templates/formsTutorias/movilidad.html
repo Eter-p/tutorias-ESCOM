@@ -1,0 +1,46 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+
+<h1 class="text-center">TUTORÍAS DE MOVILIDAD</h1>
+<h1>{{error}}</h1>
+<ul class="list-group">
+    <li class="list-group-item">
+        {% if user.is_authenticated %}
+            <p><a href="/administrador" class="btn btn-outline-primary"> Regresar </a></p>
+            <form method="GET" class="input-group m-3" style="padding-right: 500px;">
+                <input type="text" class="form-control text-dark" name="q" value="{{ query }}" placeholder="Buscar profesor...">
+                <button type="submit" class="btn btn-outline-primary">Buscar</button>
+            </form>
+            <ul>
+                <li class="list-group-item">
+                    <p><b>Total de profesores: {{lista_profesores|length}}</b> </p>
+                </li>
+                {% for profesor, tutorias in lista_profesores.items %}
+                    <li class="card shadow-sm mb-4">
+                        <strong class="card-header bg-primary text-white fw-bold">Profesor(a):{{ profesor.nombre }}</strong> 
+                        <ul>
+                        {% for tutoria in tutorias%}
+                            {% for profe, alumnos in alumnos_movilidad.items %}
+                                {% if profe == profesor %}
+                                    {% for boleta,nombre in alumnos.items %}
+                                        <li>
+                                            <p><strong>Boleta del alumno: </strong>{{ boleta }}</p>
+                                            <p><strong>Nombre del alumno: </strong>{{ nombre }}</p>
+                                        </li>
+                                    {% endfor %}
+                                {% endif %}
+                            {% endfor %}
+                            <p><strong>Número de hombres:</strong> {{ tutoria.no_hombres_movilidad }}</p>
+                            <p><strong>Número de mujeres:</strong> {{ tutoria.no_mujeres_movilidad }}</p>
+                            <p><a class="btn btn-outline-primary w-10" target="_blank" href="{{ tutoria.lista_alumnos_grupal }}">Lista de Alumnos</a></p>
+                        {% endfor %}
+                        </ul>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </li>
+</ul>        
+{% endblock %}
+
+

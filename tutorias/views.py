@@ -1,6 +1,24 @@
 from django.shortcuts import render
-from formulario.models import Profesor
+from profesores.models import Profesor
 from .models import TutoriaGrupal,TutoriaIndividual,TutoriaPares,TutoriaRecuperacion,TutoriaMovilidad,TutoriaRegularizacion
+
+def regitro_grupales(request):
+    return render(request,"responseHTML/success.html",{"saludo":"hola  mundo"})
+
+def regitro_individual(request):
+    return render(request,"responseHTML/success.html",{"saludo":"hola  mundo"})
+
+def regitro_pares(request):
+    return render(request,"responseHTML/success.html",{"saludo":"hola  mundo"})
+
+def regitro_regularizacion(request):
+    return render(request,"responseHTML/success.html",{"saludo":"hola  mundo"})
+
+def regitro_recuperacion(request):
+    return render(request,"responseHTML/success.html",{"saludo":"hola  mundo"})
+
+def regitro_movilidad(request):
+    return render(request,"responseHTML/success.html",{"saludo":"hola  mundo"})
 
 def lista_tutorias(request,tipo):
     if tipo == "grupal":

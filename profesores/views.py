@@ -1,19 +1,23 @@
 from django.contrib import messages
 from django.contrib.auth import login,logout,authenticate
-from django.contrib.auth.models import User
-from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render,get_object_or_404
 
 from django.core.mail import send_mail
 from django.shortcuts import render,redirect,get_object_or_404
-from .forms import FormProfesor
 from .models import Profesor
 from .utils import falta_datos,listar_alumnos
 from tutorias.models import Tutorias,TutoriaGrupal,TutoriaPares,TutoriaIndividual,TutoriaMovilidad,TutoriaRegularizacion,TutoriaRecuperacion
 
-@login_required
+def test(request):
+    return render(request,"responseHTML/success.html",{"saludo":"hola  mundo"})
+
+def inicio(request):
+    return render(request,"inicio.html")
+
 def administrador(request):
+    if request.method == "GET":
+        return render(request,"administrador.html")
     
     tipos_tutorias = [TutoriaGrupal,TutoriaPares,TutoriaIndividual,TutoriaMovilidad,TutoriaRegularizacion,TutoriaRecuperacion]
     totales_tutorias = ["total_grupales","total_individuales","total_pares","total_regularizacion","total_recuperacion","total_movilidad"]
@@ -29,14 +33,14 @@ def administrador(request):
         conteo_tutorias[total_turoria] = len(lista_profesores)
         
     return render(request,"administrador.html",{
-        "total_profesores": len(Profesor.objects.all()),
+        "total_profesores": len(User.objects.all()),
         "totales_tutorias": conteo_tutorias
     })
 
 @login_required
 def profesores(request):
     query = request.GET.get("q", "")
-    resultados = Profesor.objects.filter(nombre__icontains=query) if query else Profesor.objects.all()
+    resultados = User.objects.filter(nombre__icontains=query) if query else User.objects.all()
     if request.method == "GET":
         return render(request,"profesores.html",{
             "lista_profesores": resultados,
@@ -47,7 +51,7 @@ def profesores(request):
     tt = ["grupal","pares","individual","movilidad","regularizacion","recuperacion"]
     
     profesor_seleccionado = request.POST.get("profesor_seleccionado")
-    pr = Profesor.objects.get(nombre=profesor_seleccionado)
+    pr = User.objects.get(nombre=profesor_seleccionado)
     
     tutorias_asociadas = {}
     for tutorias,t in zip(tipos_tutorias,tt):
@@ -67,7 +71,6 @@ def profesores(request):
         'query':query,
         "mostrar":True
     })
-
 
 #REGISTRO DEL PROFESOR Y SUS TUTORÍAS ----------------------------------------------------------
 def formulario(request):
@@ -221,35 +224,59 @@ def formulario(request):
 #ELIMINAR REGISTRO DEL PROFESOR Y SUS TUTORÍAS -------------  ----------------------------------
 def eliminar_profesor(request,profesor_id):
     try:
-        profesor = get_object_or_404(Profesor, id=profesor_id)
+        profesor = get_object_or_404(User, id=profesor_id)
         profesor.delete()
     except:
         return render(request,"responseHTML/failure.html")
 
+#REGISTAR USUARIO ------------------------------------------------------------------------------
+def signup(request):
+    if request.method == "GET":
+        return render(request, "singup.html")
+    try:
+        if Profesor.objects.filter(email=request.POST["correo_institucional"]).exists():
+            raise ValueError(f'Ya existe una cuenta asociada al correo {request.POST["correo_institucional"]}.Si usted no resgitro este usuario contacte con el administrador')
+        if Profesor.objects.filter(username=request.POST["usuario"]).exists():
+            raise ValueError("El nombre de usuario ya está en uso, por favor utilice otro.")
+        if request.POST["password1"] == request.POST["password2"]:
+            raise ValueError("Las contraseñas no coinciden")
+        profesor_creado = Profesor.objects.create(
+            nombre = request.POST["nombre"],
+            email = request.POST["correo_institucional"],
+            correo_alterno = request.POST["correo_alterno"],
+            username = request.POST["usuario"],
+        )
+        profesor_creado.set_password(request.POST["password1"])
+        profesor_creado.save()
+        return render(request,"responseHTML/success.html",{"success": "usuario creado"})
+    except ValueError as error:
+        return render(request,"singup.html", {"error": str(error)})
+    except Exception as no_se:
+        return render(request,"singup.html", {"error": f'Error no contemplado, intente mas tarde: {no_se}'})
+
 #INICIAR SESIÓN --------------------------------------------------------------------------------
 def signin(request):
-	if request.method == "GET":
-		return render(request, "signin.html",{
-			'form': AuthenticationForm,
-			'usuario': request.user.first_name if request.user.is_authenticated else "Invitado" 
-		})
-	try:
-		username=request.POST['username']
-		password=request.POST['password']
-		user = User.objects.get(username=username)
-		if not user.is_active:
-			return render(request, "signin.html", { "error": "Tu cuenta está inactiva. Contacta al administrador." })
-		auth = authenticate(request,username=username,password=password)
-		if auth is None:
-			return render(request, "signin.html",{
-				'form': AuthenticationForm,
-				'error': "Credenciales incorrectas. Intenta nuevamente"
-			})
-		else:
-			login(request,auth)
-			return redirect("administrador")
-	except User.DoesNotExist:
-		return render(request, "signin.html", { "error": "Usuario no registrado." })
+    if request.method == "GET":
+        return render(request, "login.html")
+    try:
+        username=request.POST['username']
+        password=request.POST['password']
+        if not Profesor.objects.filter(username=username).exists():
+            raise ValueError("Usuario no registrado.")
+        user = Profesor.objects.get(username=username)
+        if not user.is_active:
+            raise ValueError("Tu cuenta está inactiva. Contacta al administrador.")
+        auth = authenticate(request,username=username,password=password)
+        if auth is None:
+            raise ValueError("Credenciales incorrectas. Intenta nuevamente")
+        login(request,auth)
+        if user.is_superuser:
+            return redirect("administrador")
+        return redirect("inicio")
+    except ValueError as error:
+        return render(request, "login.html", { "error": str(error) })
+    except Exception as no_se:
+        return render(request,"singup.html", {"error": f'Error no contemplado, intente mas tarde: {no_se}'})
 
 #CERRAR SESIÓN ---------------------------------------------------------------------------------
 @login_required

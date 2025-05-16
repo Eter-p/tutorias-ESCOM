@@ -1,0 +1,16 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+
+<div class="row">
+    {% if success == "usuario creado" %}
+        <div class="col-md-8 offset-md-3 my-3">
+            <h2 class="display-5">Usuario Regitrado con exito</h2>
+            <a href="/login" class="btn btn-primary">Ir a inicia sesión</a>
+        </div>
+    {% elif success == "tutoria registrada" %}
+        <div class="col-md-8 offset-md-3">
+            <h2 class="display-5">Tutoría Regitrada con exito</h2>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

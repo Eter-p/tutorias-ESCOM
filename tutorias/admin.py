@@ -17,7 +17,7 @@ class TutoriaGrupalAdmin(admin.ModelAdmin):
 
 class TutoriaParesAdmin(admin.ModelAdmin):
     form = FormTutoriaPares
-    list_display = ("tutoria","nombre_pares","boleta_pares")
+    list_display = ("tutoria","nombre_pares","boleta_pares","unidad_pares")
     search_fields = ("tutoria__profesor__nombre",)
 
 class TutoriaIndividuaAdmin(admin.ModelAdmin):

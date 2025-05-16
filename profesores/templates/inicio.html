@@ -1,0 +1,108 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+<div class="row align-items-start">
+	{% if user.is_authenticated %}
+		{% if user.is_superuser %}
+			<div class=" card col">
+				<a href="/administrador" class="btn btn-primary">Ir a administrador</a>
+			</div>
+		{% elif user.is_active %}
+			<div class="col card card-body text-center align-items-center" >
+				<p><h1 class="display-4">Registro de Tutorías</h1></p>
+				<div class="container py-3">
+					<div class="row pb-4" >
+						<div class="col ">
+							<a class="list-group-item btn btn-outline-primary border border-dark rounded-3 py-5" href="/administrador/tutoria/grupal">
+								<h5 class="mb-3">Grupal</h5>
+							</a>
+						</div>
+						<div class="col">
+							<a class="list-group-item btn btn-outline-primary border border-dark rounded-3 py-5" href="/administrador/tutoria/individual">
+								<h5 class="mb-3">Individual</h5>
+							</a>
+						</div>
+						<div class="col">
+							<a class="list-group-item btn btn-outline-primary border border-dark rounded-3 py-5" href="/administrador/tutoria/pares">
+								<h5 class="mb-3">Entre Pares</h5>
+							</a>
+						</div>
+					</div>
+					<div class="row" >
+						<div class="col">
+							<a class="list-group-item btn btn-outline-primary border border-dark rounded-3 py-5" href="/administrador/tutoria/recuperacion">
+								<h5 class="mb-3">De Recuperación</h5>
+							</a>
+						</div>
+						<div class="col">
+							<a class="list-group-item btn btn-outline-primary border border-dark rounded-3 py-5" href="/administrador/tutoria/regularizacion">
+								<h5 class="mb-3">De Regularización</h5>
+							</a>
+						</div>
+						<div class="col">
+							<a class="list-group-item btn btn-outline-primary border border-dark rounded-3 py-5" href="/administrador/tutoria/movilidad">
+								<h5 class="mb-3">De Movilidad</h5>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		{% endif %}
+	{% else %}
+		<div class="card card-body">
+			<h1 class="display-4 text-center">¡Bienvenido al Sistema de registro de Tutorías!</h1>
+			<p class="text-center">
+				Este sitio ha sido diseñado para simplificar y agilizar los procesos de registro.
+			</p>
+		</div>
+		<div class="col-4 card card-body m-3">
+			<h2 class="text-center text-primary">INICIAR SESIÓN</h2>
+			<form action="/login/" method="post" class="card border border-0">
+				{% csrf_token %}
+				<div class="form-group mb-3">
+					<label class="form-label p-2" for="username">Usuario:</label>
+					<input type="text" class="form-control text-dark" style="background-color: lightgray;" name="username" placeholder="Nombre de usuario">
+				</div>
+				<div class="form-group mb-3">
+					<label class="form-label p-2" for="password">Contraseña:</label>
+					<input type="password" name="password" id="password" class="form-control text-dark" style="background-color: lightgray;" placeholder="Contraseña">
+				</div>
+				<button class="btn btn-primary">Iniciar Sesion</button>
+			</form>
+			
+		</div>
+		<div class="col-4 card card-body m-3">
+			<h2 class="text-center text-success">REGISTRAR USUARIO</h2>
+			<form action="/signup/" method="post" class="card border border-0">
+				{% csrf_token %}
+				<div class="form-group">
+					<label class="form-label p-2" for="nombre">Nombre del profesor tutor o profesora tutora <b class="text-danger">*</b></label>
+					<input type="text" class="form-control text-dark" style="background-color: lightgray;" id="nombre" name="nombre" placeholder="Nombre completo" required>
+				</div>
+				
+				<div class="form-group">
+					<label  class="form-label p-2" for="correo_institucional">Correo electrónico Institucional <b class="text-danger">*</b></label>
+					<input type="email" class="form-control text-dark" style="background-color: lightgray;" id="correo_institucional" name="correo_institucional" required>
+				</div>
+				<div class="form-group">
+					<label  class="form-label p-2" for="correo_alterno">Correo electrónico Alterno</label>
+					<input type="email" class="form-control text-dark" style="background-color: lightgray;" id="correo_alterno" name="correo_alterno">
+				</div>
+				<div class="form-group">
+					<label class="form-label p-2" for="usuario">Nombre de usuario <b class="text-danger">*</b></label>
+					<input type="text" class="form-control text-dark" style="background-color: lightgray;" id="usuario" name="usuario" placeholder="Solo letras, números, @, +, - y _" required>
+				</div>
+				<div class="form-group">
+					<label class="form-label p-2" for="password1">Contraseña <b class="text-danger">*</b></label>
+					<input type="password" class="form-control text-dark" style="background-color: lightgray;" id="password1" name="password1" required>
+				</div>
+				<div class="form-group">
+					<label class="form-label p-2" for="password2">Repetir contraseña <b class="text-danger">*</b></label>
+					<input type="password" class="form-control text-dark" style="background-color: lightgray;" id="password2" name="password2" required>
+				</div>
+				<button class="btn btn-success my-3">Registar</button>
+			</form>
+		</div>
+	{% endif %}
+</div>
+{% endblock %}

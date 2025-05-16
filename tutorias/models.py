@@ -1,11 +1,15 @@
 from django.db import models
-from formulario.models import Profesor
+from django.utils.timezone import now
+from profesores.models import Profesor
 
 class Tutorias(models.Model):
     tipo = models.CharField(max_length=15)
+    fecha = models.DateTimeField(null=True,blank=True,default=now)
     profesor = models.ForeignKey(Profesor,on_delete=models.CASCADE)
+    
     def __str__(self):
         return f"{self.profesor}"
+    
     class Meta:
         verbose_name = "Tutoría"
         verbose_name_plural = "Tutorías"

@@ -16,16 +16,18 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from formulario import views as vf
-from tutorias import views as vt
+from profesores import views as vprof
+from tutorias import views as vtuto
 
 urlpatterns = [
+    path('',vprof.inicio,name="inicio"),
     path('admin/', admin.site.urls),
-    path('',vf.formulario,name="inicio"),
-    path('administrador/',vf.administrador,name="administrador"),
-    path('administrador/tutoria/<str:tipo>/',vt.lista_tutorias,name="lista_tutorias"),
-    path('administrador/profesores/',vf.profesores,name="profesores"),
-    path('formulario/',vf.formulario,name="formulario"),
-    path('signin/',vf.signin,name="signin"),
-    path('logout/',vf.signout,name="logout"),
+    path('administrador/',vprof.administrador,name="administrador"),
+    path('administrador/tutoria/<str:tipo>/',vtuto.lista_tutorias,name="lista_tutorias"),
+    path('administrador/profesores/',vprof.profesores,name="profesores"),
+    path('formulario/',vprof.formulario,name="formulario"),
+    path('login/',vprof.signin,name="login"),
+    path('logout/',vprof.signout,name="logout"),
+    path('signup/',vprof.signup,name="signup"),
+    path('test/',vprof.test,name="test"),
 ]
