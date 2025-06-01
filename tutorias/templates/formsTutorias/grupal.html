@@ -1,0 +1,123 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+
+<h1 class="text-center">REGISTRAR TUTORÍA GRUPAL</h1>
+<h1>{{error}}</h1>
+<!---------------------------------------------------------------------------------------------------------->
+<!------- Formulario de Regitro de las Tutorías Grupales --------------------------------------------------->
+<p><a href="/" class="btn btn-outline-primary"> Regresar </a></p>
+<form action="/registro/tutoria/grupal/" class="p-2" method="post">
+    {% csrf_token %}
+    <ul class="list-group">
+        <li class="list-group-item">
+            <p><b>Instrucciones: </b>Ingrese los grupos a los cuales está impartiendo clase en este semestre en los cuales quiere realizar tutoría grupal.</p>            
+            <div class="{% if total_tutorias > 2 %} d-none {% endif %}">
+                <div class="form-group">
+                    <label class="form-label p-2" for="grupo_1">Grupo 1 <b class="text-danger">*</b></label>
+                    <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="grupo_1" name="grupo" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label p-2" for="unidad_1">Unidad de aprendizaje impartida <b class="text-danger">*</b></label>
+                    <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="unidad_1" name="unidad" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label p-2" for="carrera_1">Carrera <b class="text-danger">*</b></label>
+                    <select class="form-select text-dark" style="background-color: lightgray;" id="carrera_1" name="carrera" required>
+                        <option value="isc">Ingeniería en Sistemas Computacionales</option>
+                        <option value="iia">Ingeniería en Inteligencia Artificial</option>
+                        <option value="lcd">Licenciatura en Ciencia de Datos</option>
+                        <option value="isisa">ISISA</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label p-2" for="numero_hombres_grupal_1">Número de hombres <b class="text-danger">*</b></label>
+                    <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="numero_hombres_grupal_1" name="numero_hombres_grupal" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label p-2" for="numero_mujeres_grupal_1">Número de mujeres <b class="text-danger">*</b></label>
+                    <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="numero_mujeres_grupal_1" name="numero_mujeres_grupal" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label p-2" for="lista_alumnos_grupal_1">Incluya la liga al archivo con la lista de alumnos <b class="text-danger">*</b></label>
+                    <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="lista_alumnos_grupal_1" name="lista_alumnos_grupal" required>
+                </div>
+            </div>
+            <div class="{% if total_tutorias > 1 %} d-none {% endif %}">
+                <div class="form-group">
+                    <label class="form-label px-2 pb-2 py-5" for="grupo_2">Grupo 2</label>
+                    <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="grupo_2" name="grupo">
+                </div>
+                <div class="form-group">
+                    <label class="form-label p-2" for="unidad_2">Unidad de aprendizaje impartida</label>
+                    <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="unidad_2" name="unidad">
+                </div>
+                <div class="form-group">
+                    <label class="form-label p-2" for="carrera_2">Carrera</label>
+                    <select class="form-select text-dark" style="background-color: lightgray;" id="carrera_2" name="carrera">
+                        <option value="isc">Ingeniería en Sistemas Computacionales</option>
+                        <option value="iia">Ingeniería en Inteligencia Artificial</option>
+                        <option value="lcd">Licenciatura en Ciencia de Datos</option>
+                        <option value="isisa">ISISA</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label p-2" for="numero_hombres_grupal_2">Número de hombres</label>
+                    <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="numero_hombres_grupal_2" name="numero_hombres_grupal">
+                </div>
+                <div class="form-group">
+                    <label class="form-label p-2" for="numero_mujeres_grupal_2">Número de mujeres</label>
+                    <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="numero_mujeres_grupal_2" name="numero_mujeres_grupal">
+                </div>
+                <div class="form-group">
+                    <label class="form-label p-2" for="lista_alumnos_grupal_2">Incluya la liga al archivo con la lista de alumnos</label>
+                    <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="lista_alumnos_grupal_2" name="lista_alumnos_grupal">
+                </div>
+            </div>
+            <div class="{% if total_tutorias > 0 %} d-none {% endif %}">
+                <div class="form-group">
+                    <label class="form-label px-2 pb-2 py-5" for="grupo_3">Grupo 3</label>
+                    <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="grupo_3" name="grupo">
+                </div>
+                <div class="form-group">
+                    <label class="form-label p-2" for="unidad_3">Unidad de aprendizaje impartida</label>
+                    <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="unidad_3" name="unidad">
+                </div>
+                <div class="form-group">
+                    <label class="form-label p-2" for="carrera_3">Carrera</label>
+                    <select class="form-select text-dark" style="background-color: lightgray;" id="carrera_3" name="carrera">
+                        <option value="isc">Ingeniería en Sistemas Computacionales</option>
+                        <option value="iia">Ingeniería en Inteligencia Artificial</option>
+                        <option value="lcd">Licenciatura en Ciencia de Datos</option>
+                        <option value="isisa">ISISA</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label p-2" for="numero_hombres_grupal_3">Número de hombres</label>
+                    <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="numero_hombres_grupal_3" name="numero_hombres_grupal">
+                </div>
+                <div class="form-group">
+                    <label class="form-label p-2" for="numero_mujeres_grupal_3">Número de mujeres</label>
+                    <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="numero_mujeres_grupal_3" name="numero_mujeres_grupal">
+                </div>
+                <div class="form-group">
+                    <label class="form-label p-2" for="lista_alumnos_grupal_1">Incluya la liga al archivo con la lista de alumnos</label>
+                    <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="lista_alumnos_grupal_1" name="lista_alumnos_grupal">
+                </div>
+            </div>
+        </li>
+        <button class="btn btn-primary {% if total_tutorias > 2 %} d-none {% endif %}">Guardar</button>
+    </ul>
+</form>
+
+{% if messages %}
+    {% for message in messages %}
+        <script>
+            alert("{{ message }}");
+            window.history.back();
+        </script>       
+    {% endfor %}
+{% endif %}
+
+{% endblock %}
+
+

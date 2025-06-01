@@ -1,11 +1,11 @@
 {% extends "layouts/base.html" %}
 {% block content %}
 
-<h1 class="text-center">TUTORÍAS GRUPALES</h1>
+<h1 class="text-center">TUTORÍAS DE RECUPERACIÓN</h1>
 <h1>{{error}}</h1>
 <ul class="list-group">
     <li class="list-group-item">
-        {% if user.is_authenticated %}
+        {% if user.is_superuser %}
             <p><a href="/administrador" class="btn btn-outline-primary"> Regresar </a></p>
             <div class="row mb-3">
                 <div class="col">
@@ -13,7 +13,7 @@
                         <input type="text" class="form-control text-dark" name="q" value="{{ query }}" placeholder="Buscar profesor...">
                         <button type="submit" class="btn btn-outline-primary">Buscar</button>
                     </form>
-                    <a class="btn btn-outline-danger ms-3 mt-3" href="/administrador/tutoria/grupal">Borrar busqueda y filtros</a>
+                    <a class="btn btn-outline-danger ms-3 mt-3" href="/administrador/tutoria/recuperacion">Borrar busqueda y filtros</a>
                 </div>
                 <div class="col">
                     <form method="POST">
@@ -29,7 +29,6 @@
                     </form>
                 </div>
             </div>
-            
             <ul>
                 <li class="list-group-item">
                     <p><b>Total de profesores: {{lista_profesores|length}}</b> </p>
@@ -40,34 +39,61 @@
                         <ul>
                             {% for tutoria in tutorias %}
                                 <li>
-                                    <p><strong>Grupo:</strong> {{ tutoria.grupo }}</p>
-                                    <p><strong>Materia:</strong> {{ tutoria.unidad_aprendizaje }}</p>
+                                    <p><strong>Unidad de aprendizaje:</strong> {{ tutoria.unidad_aprendizaje_recuperacion }}</p>
                                     <p><strong>Carrera:</strong>
-                                        {% if tutoria.carrera  == "isc" %}
+                                        {% if tutoria.carrera_recuperacion  == "isc" %}
                                             Ingeniería en Sistemas Computacionales
-                                        {% elif tutoria.carrera == "iia" %}
+                                        {% elif tutoria.carrera_recuperacion == "iia" %}
                                             Ingeniería en Inteligencia Artificial
-                                        {% elif tutoria.carrera == "lcd" %}
+                                        {% elif tutoria.carrera_recuperacion == "lcd" %}
                                             Licenciatura en Ciencia de Datos
-                                        {% elif tutoria.carrera == "isisa" %}
+                                        {% elif tutoria.carrera_recuperacion == "isisa" %}
                                             ISISA
                                         {% else %}
-                                            {{ tutoria.carrera }}
+                                            {{ tutoria.carrera_recuperacion }}
                                         {% endif %}
                                     </p>
-                                    <p><strong>Número de hombres:</strong> {{ tutoria.no_hombres_grupal }}</p>
-                                    <p><strong>Número de mujeres:</strong> {{ tutoria.no_mujeres_grupal }}</p>
-                                    <p><a class="btn btn-outline-primary w-10" target="_blank" href="{{ tutoria.lista_alumnos_grupal }}">Lista de Alumnos</a></p>
+                                    <p><strong>Número de hombres:</strong> {{ tutoria.no_hombres_recuperacion }}</p>
+                                    <p><strong>Número de mujeres:</strong> {{ tutoria.no_mujeres_recuperacion }}</p>
+                                    <p><a class="btn btn-outline-primary w-10" target="_blank" href="{{ tutoria.lista_alumnos_recuperacion }}">Lista de Alumnos</a></p>
                                 </li>
                             {% endfor %}
                         </ul>
                     </li>
                 {% endfor %}
             </ul>
+        {% else %}
+            <p><a href="/" class="btn btn-outline-primary"> Regresar </a></p>
+            <ul>
+                {% if not lista_tutorias %}
+                    <h3 class="text-center"> Aun no hay tutorías registradas </h3>
+                {% endif %}
+                {% for tutoria in lista_tutorias  %}
+                    <li class="card shadow-sm mb-4">
+                        <strong class="card-header bg-primary text-white fw-bold">Unidad de aprendizaje:{{ tutoria.unidad_aprendizaje_recuperacion }}</strong> 
+                    <li  class="list-group-item">
+                        <p><strong>Carrera:</strong>
+                            {% if tutoria.carrera_recuperacion  == "isc" %}
+                                Ingeniería en Sistemas Computacionales
+                            {% elif tutoria.carrera_recuperacion == "iia" %}
+                                Ingeniería en Inteligencia Artificial
+                            {% elif tutoria.carrera_recuperacion == "lcd" %}
+                                Licenciatura en Ciencia de Datos
+                            {% elif tutoria.carrera_recuperacion == "isisa" %}
+                                ISISA
+                            {% else %}
+                                {{ tutoria.carrera_recuperacion }}
+                            {% endif %}
+                        </p>
+                        <p><strong>Número de hombres:</strong> {{ tutoria.no_hombres_recuperacion }}</p>
+                        <p><strong>Número de mujeres:</strong> {{ tutoria.no_mujeres_recuperacion }}</p>
+                        <p><a class="btn btn-outline-primary w-10" target="_blank" href="{{ tutoria.lista_alumnos_recuperacion }}">Lista de Alumnos</a></p>
+                    </li>
+                {% endfor %}
+            </ul>
         {% endif %}
     </li>
 </ul>
-
 {% endblock %}
 
 

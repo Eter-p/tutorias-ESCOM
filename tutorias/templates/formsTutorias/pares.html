@@ -1,38 +1,61 @@
 {% extends "layouts/base.html" %}
 {% block content %}
 
-<h1 class="text-center">TUTORÍAS ENTRE PARES</h1>
+<h1 class="text-center">REGISTRAR TUTORÍA ENTRE PARES</h1>
 <h1>{{error}}</h1>
-<ul class="list-group">
-    <li class="list-group-item">
-        {% if user.is_authenticated %}
-            <p><a href="/administrador" class="btn btn-outline-primary"> Regresar </a></p>
-            <form method="GET" class="input-group m-3" style="padding-right: 500px;">
-                <input type="text" class="form-control text-dark" name="q" value="{{ query }}" placeholder="Buscar profesor...">
-                <button type="submit" class="btn btn-outline-primary">Buscar</button>
-            </form>
-            <ul>
-                <li class="list-group-item">
-                    <p><b>Total de profesores: {{lista_profesores|length}}</b> </p>
-                </li>
-                {% for profesor, tutorias in lista_profesores.items %}
-                    <li class="card shadow-sm mb-4">
-                        <strong class="card-header bg-primary text-white fw-bold">Profesor(a):{{ profesor.nombre }}</strong> 
-                        <ul>
-                            {% for tutoria in tutorias %}
-                                <li>
-                                    <p><strong>Nombre del alumno asesor:</strong> {{ tutoria.nombre_pares }}</p>
-                                    <p><strong>Número de boleta del alumno asesor:</strong> {{ tutoria.boleta_pares }}</p>
-                                    <p><strong>Unidad de aprendizaje donde apoyará el alumno asesor:</strong> {{ tutoria.unidad_pares }}</p>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    </li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-    </li>
-</ul>        
+<!---------------------------------------------------------------------------------------------------------->
+<!------- Formulario de Regitro de las Tutorías Grupales --------------------------------------------------->
+<p><a href="/" class="btn btn-outline-primary"> Regresar </a></p>
+<form action="/registro/tutoria/pares/" class="p-2" method="post">
+    {% csrf_token %}
+    <ul class="list-group">
+        <li class="list-group-item" name = "tutoria_pares">
+            <div id="tutoriaPares">
+                <p><b>Instrucciones: </b>En el caso de que considere a uno o dos alumnos como alumnos asesores o alumnos tutores favor de registar númeor de boleta y nombre del mismo.</p>
+                <p>Recuerde que el alumno asesor lo auxiliará a usted proporcionando tutoría a sus compañeros de clase sobre algún tema de la Unidad de Aprendizaje que usted imparte.</p>
+                <div class="{% if total_tutorias > 1 %} d-none {% endif %}">
+                    <div class="form-group">
+                        <label class="form-label p-2" for="nombre_alumno_asesor_1">Nombre del alumno asesor 1 <b class="text-danger">*</b></label>
+                        <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="nombre_alumno_asesor_1" name="nombre_alumno_asesor">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label p-2" for="boleta_alumno_asesor_1">Boleta del alumno asesor 1 <b class="text-danger">*</b></label>
+                        <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="boleta_alumno_asesor_1" name="boleta_alumno_asesor">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label p-2" for="unidad_pares_1">Unidad de aprendizaje donde apoyará el alumno asesor 1 <b class="text-danger">*</b></label>
+                        <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="unidad_pares_1" name="unidad_aprendizaje_pares">
+                    </div>
+                </div>
+                <div class="{% if total_tutorias > 0 %} d-none {% endif %}">
+                    <div class="form-group">
+                        <label class="form-label p-2" for="nombre_alumno_asesor_2">Nombre del alumno asesor 2</label>
+                        <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="nombre_alumno_asesor_2" name="nombre_alumno_asesor">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label p-2" for="boleta_alumno_asesor_2">Boleta del alumno asesor 2</label>
+                        <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="boleta_alumno_asesor_2" name="boleta_alumno_asesor">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label p-2" for="unidad_pares_2">Unidad de aprendizaje donde apoyará el alumno asesor 2</label>
+                        <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="unidad_pares_2" name="unidad_aprendizaje_pares">
+                    </div>
+                </div>
+            </div>
+        </li>
+        <button class="btn btn-primary {% if total_tutorias > 1 %} d-none {% endif %}">Guardar</button>
+    </ul>
+</form>
+
+{% if messages %}
+    {% for message in messages %}
+        <script>
+            alert("{{ message }}");
+            window.history.back();
+        </script>       
+    {% endfor %}
+{% endif %}
+
 {% endblock %}
 
 

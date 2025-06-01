@@ -9,7 +9,7 @@ admin.site.index_title = "Bienvenido al Administrador"
 
 class CustomUserAdmin(UserAdmin):
     fieldsets = (
-        (None, {'fields': ('username', 'email', 'password')}),
+        (None, {'fields': ('username', 'email', 'password', 'nombre','correo_alterno')}),
         ('Permisos', {'fields': ('is_active', 'is_staff', 'is_superuser', 'user_permissions')}),
         ('Fechas importantes', {'fields': ('last_login', 'date_joined')}),
     )

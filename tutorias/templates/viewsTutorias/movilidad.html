@@ -5,7 +5,7 @@
 <h1>{{error}}</h1>
 <ul class="list-group">
     <li class="list-group-item">
-        {% if user.is_authenticated %}
+        {% if user.is_superuser %}
             <p><a href="/administrador" class="btn btn-outline-primary"> Regresar </a></p>
             <form method="GET" class="input-group m-3" style="padding-right: 500px;">
                 <input type="text" class="form-control text-dark" name="q" value="{{ query }}" placeholder="Buscar profesor...">
@@ -36,6 +36,25 @@
                         {% endfor %}
                         </ul>
                     </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p><a href="/" class="btn btn-outline-primary"> Regresar </a></p>
+            <ul>
+                {% if not lista_tutorias %}
+                    <h3 class="text-center"> Aun no hay tutorías registradas </h3>
+                {% endif %}
+                {% for tutoria in lista_tutorias  %}
+                    {% for boleta,nombre in alumnos.items %}
+                        <li class="card shadow-sm mb-4">
+                            <strong class="card-header bg-primary text-white fw-bold">Boleta: {{ boleta }}</strong>
+                            <p><strong>Nombre del alumno: </strong>{{ nombre }}</p>
+                        </li>
+                    {% endfor %}
+                    <p><strong>Número de hombres:</strong> {{ tutoria.no_hombres_movilidad }}</p>
+                    <p><strong>Número de mujeres:</strong> {{ tutoria.no_mujeres_movilidad }}</p>
+                    <p><a class="btn btn-outline-primary w-10" target="_blank" href="{{ tutoria.lista_alumnos_grupal }}">Lista de Alumnos</a></p>
+                </li>
                 {% endfor %}
             </ul>
         {% endif %}

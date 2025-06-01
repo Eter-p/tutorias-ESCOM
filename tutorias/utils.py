@@ -3,7 +3,6 @@
 # Si todos los datos estan vacios, regresa False (se ignora el caso)
 # Si hay algunos campos vacios y otros no, regresa True (faltan datos)
 def falta_datos(tabla_datos):
-    print(len(tabla_datos[0]))
     for i in range(len(tabla_datos[0])):
         exiten_datos = []
         for columna in tabla_datos:

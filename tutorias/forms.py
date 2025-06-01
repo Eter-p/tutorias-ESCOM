@@ -28,7 +28,7 @@ class FormTutoriaGrupal(forms.ModelForm):
             "lista_alumnos_grupal"
         ]
         labels = {
-            "tutoria": "Profesor",
+            "tutoria": "Tutoria - ID",
             "grupo": "Grupo",
             "unidad_aprendizaje": "Unidad de aprendizaje",
             "carrera": "Carrera",
@@ -47,9 +47,9 @@ class FormTutoriaPares(forms.ModelForm):
             "unidad_pares"
         ]
         labels = {
-            "tutoria": "Profesor",
-            "nombre_pares" : "Nombres de los alumnos",
-            "boleta_pares" : "Boletas de los alumnos",
+            "tutoria": "Tutoria - ID",
+            "nombre_pares" : "Nombre",
+            "boleta_pares" : "Boleta",
             "unidad_pares" : "Unidad de aprendizaje",
         }
 
@@ -63,7 +63,7 @@ class FormTutoriaIndividual(forms.ModelForm):
             "lista_alumnos_individual"
         ]
         labels = {
-            "tutoria": "Profesor",
+            "tutoria": "Tutoria - ID",
             "no_hombres_individual" : "Número de Hombres",
             "no_mujeres_individual" : "Número de Mujeres",
             "lista_alumnos_individual" : "Lista de alumnos"
@@ -79,7 +79,7 @@ class FormTutoriaMovilidad(forms.ModelForm):
             "no_mujeres_movilidad"
         ]
         labels = {
-            "tutoria": "Profesor",
+            "tutoria": "Tutoria - ID",
             "boleta_nombre" : "Alumnos de movilidad",
             "no_hombres_movilidad" : "Número de Hombres",
             "no_mujeres_movilidad" : "Número de Mujeres"
@@ -97,7 +97,7 @@ class FormTutoriaRegularizacion(forms.ModelForm):
             "lista_alumnos_regularizacion"
         ]
         labels = {
-            "tutoria": "Profesor",
+            "tutoria": "Tutoria - ID",
             "unidad_aprendizaje_regularizacion" : "Unidad de aprendizaje",
             "carrera_regularizacion" : "Carrera",
             "no_hombres_regularizacion" : "Número de Mujeres",
@@ -117,7 +117,7 @@ class FormTutoriaRecuperacion(forms.ModelForm):
             "lista_alumnos_recuperacion"
         ]
         labels = {
-            "tutoria": "Profesor",
+            "tutoria": "Tutoria - ID",
             "unidad_aprendizaje_recuperacion" : "Unidad de aprendizaje",
             "carrera_recuperacion" : "Carrera",
             "no_hombres_recuperacion" : "Número de Mujeres",

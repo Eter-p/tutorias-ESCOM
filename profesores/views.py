@@ -1,21 +1,29 @@
-from django.contrib import messages
 from django.contrib.auth import login,logout,authenticate
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render,get_object_or_404
+from pprint import pprint
 
 from django.core.mail import send_mail
 from django.shortcuts import render,redirect,get_object_or_404
 from .models import Profesor
-from .utils import falta_datos,listar_alumnos
-from tutorias.models import Tutorias,TutoriaGrupal,TutoriaPares,TutoriaIndividual,TutoriaMovilidad,TutoriaRegularizacion,TutoriaRecuperacion
+from tutorias.models import TutoriaGrupal,TutoriaPares,TutoriaIndividual,TutoriaMovilidad,TutoriaRegularizacion,TutoriaRecuperacion
 
 def test(request):
     return render(request,"responseHTML/success.html",{"saludo":"hola  mundo"})
 
 def inicio(request):
-    return render(request,"inicio.html")
+    """ En la pantalla de inicio se hace una comprobacion de cuantas y cuales tutorías ha registrado el usuario """
+    conteo_tutorias = {}
+    if request.user.is_authenticated:
+        tipos_tutorias = [TutoriaGrupal,TutoriaIndividual,TutoriaPares,TutoriaRegularizacion,TutoriaRecuperacion,TutoriaMovilidad]
+        totales_tutorias = ["grupal","individual","pares","regularizacion","recuperacion","movilidad"]
+        
+        for tipo_tutoria,total_turoria in zip(tipos_tutorias,totales_tutorias):
+            conteo_tutorias[total_turoria]= len(tipo_tutoria.objects.filter(tutoria__profesor=request.user))
+        # pprint(conteo_tutorias)
+    return render(request,"inicio.html",{"total":conteo_tutorias})
 
-def administrador(request):
+def inicio_administrador(request):
     if request.method == "GET":
         return render(request,"administrador.html")
     
@@ -72,159 +80,10 @@ def profesores(request):
         "mostrar":True
     })
 
-#REGISTRO DEL PROFESOR Y SUS TUTORÍAS ----------------------------------------------------------
-def formulario(request):
-    if request.method== "GET":
-        return render(request,"formulario.html")
-    try:
-#-------------------------------------------------------------------------------------------
-#------ GUARDAR INFORMACIÓN DEL PROFESOR ---------------------------------------------------
-        form = FormProfesor(request.POST)
-        if not form.is_valid():
-            print(form.errors)
-            messages.error(request, "Entrada no valida en la sección: Profesor")
-            return render(request,"formulario.html",{"error":form.errors})
-        profesor_form = form.save()
-        tutorias_registradas = request.POST.getlist("botonesTutoria")
-#-------------------------------------------------------------------------------------------
-#------ GUARDAR TUTORÍAS GRUPALES ----------------------------------------------------------
-        if tutorias_registradas[0]=="ocultar":
-            grupos = request.POST.getlist("grupo")
-            unidades = request.POST.getlist("unidad")
-            carreras = request.POST.getlist("carrera")
-            hombres = request.POST.getlist("numero_hombres_grupal")
-            mujeres = request.POST.getlist("numero_mujeres_grupal")
-            archivos = request.POST.getlist("lista_alumnos_grupal")
-            
-            if falta_datos([grupos,unidades,hombres,mujeres,archivos]):
-                eliminar_profesor(request,profesor_form.id)
-                messages.error(request, "Faltaron campos por llenar. Revisa los campos en la sección: Tutoría Grupal.")
-                return render(request,"formulario.html",{"tipo":"falta_datos"})
-            
-            for i in [0,1,2]:
-                if grupos[i]:
-                    tutoria = Tutorias.objects.create(
-                        tipo = "Grupal",
-                        profesor = profesor_form
-                    )
-                    tutoria.save()
-                    tuto_grupal = TutoriaGrupal.objects.create(
-                        tutoria = tutoria,
-                        grupo = grupos[i],
-                        unidad_aprendizaje = unidades[i],
-                        carrera = carreras[i],
-                        no_hombres_grupal = hombres[i],
-                        no_mujeres_grupal = mujeres[i],
-                        lista_alumnos_grupal = archivos[i],
-                    )
-                    tuto_grupal.save()
-#-------------------------------------------------------------------------------------------
-#------ GUARDAR TUTORÍAS ENTRE PARES -------------------------------------------------------
-        if tutorias_registradas[1]=="ocultar":
-            alumnos_asesores = request.POST.getlist("nombre_alumno_asesor")
-            boletas_asesores = request.POST.getlist("boleta_alumno_asesor")
-            unidades_asesores = request.POST.getlist("unidad_aprendizaje_pares")
-            
-            if falta_datos([alumnos_asesores,boletas_asesores,unidades_asesores]):
-                eliminar_profesor(request,profesor_form.id)
-                messages.error(request, "Faltaron campos por llenar. Revisa los campos en la sección: Tutoria entre pares.")
-                return render(request,"formulario.html",{"tipo":"falta_datos"})
-            
-            for i in [0,1]:
-                if alumnos_asesores[i]:
-                    tutoria = Tutorias.objects.create(
-                        tipo = "Pares",
-                        profesor = profesor_form
-                    )
-                    tutoria.save()
-                    tuto_pares = TutoriaPares.objects.create(
-                        tutoria = tutoria,
-                        nombre_pares = alumnos_asesores[i],
-                        boleta_pares = boletas_asesores[i],
-                        unidad_pares = unidades_asesores[i]
-                    )
-                    tuto_pares.save()
-#-------------------------------------------------------------------------------------------
-#-------GUARDAR TUTORÍAS INDIVIDUALES ------------------------------------------------------
-        if tutorias_registradas[2]=="ocultar":
-            tutoria = Tutorias.objects.create(
-                tipo = "Individual",
-                profesor = profesor_form
-            )
-            tuto_individual = TutoriaIndividual.objects.create(
-                tutoria = tutoria,
-                no_hombres_individual = request.POST.get("numero_hombres_individual"),
-                no_mujeres_individual = request.POST.get("numero_mujeres_individual"),
-                lista_alumnos_individual = request.POST.get("lista_alumnos_individual")
-            )
-            tuto_individual.save()
-#-------------------------------------------------------------------------------------------
-#------ GUARDAR TUTORÍAS DE MOVILIDAD ------------------------------------------------------
-        if tutorias_registradas[3]=="ocultar":
-            alumnos_movilidad = request.POST.get("nombre_alumnos_movilidad")
-            print(alumnos_movilidad)
-            
-            lista_alumnos = listar_alumnos(alumnos_movilidad)
-            print(lista_alumnos)
-            if falta_datos(lista_alumnos):
-                eliminar_profesor(request,profesor_form.id)
-                messages.error(request, "Faltaron campos por llenar. Revisa los campos en la sección: Tutoria entre pares.")
-                return render(request,"formulario.html",{"tipo":"falta_datos"})
-            
-            tutoria = Tutorias.objects.create(
-                tipo = "Movilidad",
-                profesor = profesor_form
-            )
-            tuto_movilidad = TutoriaMovilidad.objects.create(
-                tutoria = tutoria,
-                boleta_nombre = alumnos_movilidad,
-                no_hombres_movilidad = request.POST.get("numero_hombres_movilidad"),
-                no_mujeres_movilidad = request.POST.get("numero_mujeres_movilidad"),
-            )
-            tuto_movilidad.save()
-#-------------------------------------------------------------------------------------------
-#------ GUARDAR TUTORÍAS DE REGULARIZACIÓN -------------------------------------------------
-        if tutorias_registradas[4]=="ocultar":
-            tutoria = Tutorias.objects.create(
-                tipo = "Regularización",
-                profesor = profesor_form
-            )
-            tuto_regularizacion = TutoriaRegularizacion.objects.create(
-                tutoria = tutoria,
-                unidad_aprendizaje_regularizacion = request.POST.get("unidad_regularizacion"),
-                carrera_regularizacion = request.POST.get("carrera_regularizacion"),
-                no_hombres_regularizacion = request.POST.get("numero_hombres_regularizacion"),
-                no_mujeres_regularizacion = request.POST.get("numero_mujeres_regularizacion"),
-                lista_alumnos_regularizacion = request.POST.get("lista_alumnos_regularizacion")
-            )
-            tuto_regularizacion.save()
-#-------------------------------------------------------------------------------------------
-#------ GUARDAR TUTORÍAS DE RECUPERACIÓN ---------------------------------------------------
-        if tutorias_registradas[5]=="ocultar":
-            tutoria = Tutorias.objects.create(
-                tipo = "Recuperación",
-                profesor = profesor_form
-            )
-            tuto_recuperacion = TutoriaRecuperacion.objects.create(
-                tutoria = tutoria,
-                unidad_aprendizaje_recuperacion = request.POST.get("unidad_recuperacion"),
-                carrera_recuperacion = request.POST.get("carrera_recuperacion"),
-                no_hombres_recuperacion = request.POST.get("numero_hombres_recuperacion"),
-                no_mujeres_recuperacion = request.POST.get("numero_mujeres_recuperacion"),
-                lista_alumnos_recuperacion = request.POST.get("lista_alumnos_recuperacion")
-            )
-            tuto_recuperacion.save()
-        return render(request,"responseHTML/success.html",{"tipo":"registro"})
-    except Exception as e:
-        eliminar_profesor(request,profesor_form.id)
-        return render(request,"formulario.html",{
-			'error': e,
-		})    
-
 #ELIMINAR REGISTRO DEL PROFESOR Y SUS TUTORÍAS -------------  ----------------------------------
 def eliminar_profesor(request,profesor_id):
     try:
-        profesor = get_object_or_404(User, id=profesor_id)
+        profesor = get_object_or_404(Profesor, id=profesor_id)
         profesor.delete()
     except:
         return render(request,"responseHTML/failure.html")
@@ -238,9 +97,9 @@ def signup(request):
             raise ValueError(f'Ya existe una cuenta asociada al correo {request.POST["correo_institucional"]}.Si usted no resgitro este usuario contacte con el administrador')
         if Profesor.objects.filter(username=request.POST["usuario"]).exists():
             raise ValueError("El nombre de usuario ya está en uso, por favor utilice otro.")
-        if request.POST["password1"] == request.POST["password2"]:
+        if request.POST["password1"] != request.POST["password2"]:
             raise ValueError("Las contraseñas no coinciden")
-        profesor_creado = Profesor.objects.create(
+        profesor_creado = Profesor(
             nombre = request.POST["nombre"],
             email = request.POST["correo_institucional"],
             correo_alterno = request.POST["correo_alterno"],
@@ -281,8 +140,8 @@ def signin(request):
 #CERRAR SESIÓN ---------------------------------------------------------------------------------
 @login_required
 def signout(request):
-	logout(request)
-	return redirect("inicio")
+    logout(request)
+    return redirect("inicio")
 
 
 def enviar_correo(id,tipo,correo):

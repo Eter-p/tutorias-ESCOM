@@ -9,7 +9,6 @@ class Profesor(AbstractUser):
     email = models.EmailField(max_length=100, unique=True, verbose_name="Correo institucional")
     correo_alterno = models.EmailField(max_length=100, default=None, blank=True, null=True)
     
-    
     USERNAME_FIELD = "username"
     EMAIL_FIELD = "email"
     REQUIRED_FIELDS = ["email"] 

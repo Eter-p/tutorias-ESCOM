@@ -5,7 +5,7 @@
 <h1>{{error}}</h1>
 <ul class="list-group">
     <li class="list-group-item">
-        {% if user.is_authenticated %}
+        {% if user.is_superuser %}
             <p><a href="/administrador" class="btn btn-outline-primary"> Regresar </a></p>
             <div class="row mb-3">
                 <div class="col">
@@ -59,6 +59,35 @@
                                 </li>
                             {% endfor %}
                         </ul>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p><a href="/" class="btn btn-outline-primary"> Regresar </a></p>
+            <ul>
+                {% if not lista_tutorias %}
+                    <h3 class="text-center"> Aun no hay tutorías registradas </h3>
+                {% endif %}
+                {% for tutoria in lista_tutorias  %}
+                    <li class="card shadow-sm mb-4">
+                        <strong class="card-header bg-primary text-white fw-bold">Unidad de aprendizaje: {{ tutoria.unidad_aprendizaje_regularizacion }}</strong> 
+                    <li class="list-group-item">
+                        <p><strong>Carrera:</strong>
+                            {% if tutoria.carrera_regularizacion  == "isc" %}
+                                Ingeniería en Sistemas Computacionales
+                            {% elif tutoria.carrera_regularizacion == "iia" %}
+                                Ingeniería en Inteligencia Artificial
+                            {% elif tutoria.carrera_regularizacion == "lcd" %}
+                                Licenciatura en Ciencia de Datos
+                            {% elif tutoria.carrera_regularizacion == "isisa" %}
+                                ISISA
+                            {% else %}
+                                {{ tutoria.carrera_regularizacion }}
+                            {% endif %}
+                        </p>
+                        <p><strong>Número de hombres:</strong> {{ tutoria.no_hombres_regularizacion }}</p>
+                        <p><strong>Número de mujeres:</strong> {{ tutoria.no_mujeres_regularizacion }}</p>
+                        <p><a class="btn btn-outline-primary w-10" target="_blank" href="{{ tutoria.lista_alumnos_regularizacion }}">Lista de Alumnos</a></p>
                     </li>
                 {% endfor %}
             </ul>

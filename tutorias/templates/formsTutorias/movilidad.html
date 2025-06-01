@@ -1,46 +1,45 @@
 {% extends "layouts/base.html" %}
 {% block content %}
 
-<h1 class="text-center">TUTORÍAS DE MOVILIDAD</h1>
+<h1 class="text-center">REGISTRAR TUTORÍA DE MOVILIDAD</h1>
 <h1>{{error}}</h1>
-<ul class="list-group">
-    <li class="list-group-item">
-        {% if user.is_authenticated %}
-            <p><a href="/administrador" class="btn btn-outline-primary"> Regresar </a></p>
-            <form method="GET" class="input-group m-3" style="padding-right: 500px;">
-                <input type="text" class="form-control text-dark" name="q" value="{{ query }}" placeholder="Buscar profesor...">
-                <button type="submit" class="btn btn-outline-primary">Buscar</button>
-            </form>
-            <ul>
-                <li class="list-group-item">
-                    <p><b>Total de profesores: {{lista_profesores|length}}</b> </p>
-                </li>
-                {% for profesor, tutorias in lista_profesores.items %}
-                    <li class="card shadow-sm mb-4">
-                        <strong class="card-header bg-primary text-white fw-bold">Profesor(a):{{ profesor.nombre }}</strong> 
-                        <ul>
-                        {% for tutoria in tutorias%}
-                            {% for profe, alumnos in alumnos_movilidad.items %}
-                                {% if profe == profesor %}
-                                    {% for boleta,nombre in alumnos.items %}
-                                        <li>
-                                            <p><strong>Boleta del alumno: </strong>{{ boleta }}</p>
-                                            <p><strong>Nombre del alumno: </strong>{{ nombre }}</p>
-                                        </li>
-                                    {% endfor %}
-                                {% endif %}
-                            {% endfor %}
-                            <p><strong>Número de hombres:</strong> {{ tutoria.no_hombres_movilidad }}</p>
-                            <p><strong>Número de mujeres:</strong> {{ tutoria.no_mujeres_movilidad }}</p>
-                            <p><a class="btn btn-outline-primary w-10" target="_blank" href="{{ tutoria.lista_alumnos_grupal }}">Lista de Alumnos</a></p>
-                        {% endfor %}
-                        </ul>
-                    </li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-    </li>
-</ul>        
+<!---------------------------------------------------------------------------------------------------------->
+<!------- Formulario de Regitro de las Tutorías Grupales --------------------------------------------------->
+<p><a href="/" class="btn btn-outline-primary"> Regresar </a></p>
+<form action="/registro/tutoria/movilidad/" class="p-2" method="post">
+    {% csrf_token %}
+    <ul class="list-group">
+        <p><b>Instrucciones: </b>Ingrese los Numeros de boleta y nombre con el siguente formato:</p>
+        <p>Boleta1, Nombre completo 1; Boleta2, Nombre Completo 2; ...</p>            
+        <li class="list-group-item" name = "tutoria_movilidad">
+            <div id="tutoriaMovilidad">
+                <div class="form-group">
+                    <label class="form-label p-2" for="nombre_alumnos_movilidad">Número de boleta y nombre del alumno o alumnos <b class="text-danger">*</b></label>
+                    <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="nombre_alumnos_movilidad" name="nombre_alumnos_movilidad">
+                </div>
+                <div class="form-group">
+                    <label class="form-label p-2" for="numero_hombres_movilidad">Número de hombres <b class="text-danger">*</b></label>
+                    <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="numero_hombres_movilidad" name="numero_hombres_movilidad">
+                </div>
+                <div class="form-group">
+                    <label class="form-label p-2" for="numero_mujeres_movilidad">Número de mujeres <b class="text-danger">*</b></label>
+                    <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="numero_mujeres_movilidad" name="numero_mujeres_movilidad">
+                </div>                
+            </div>      
+        </li>
+        <button class="btn btn-primary">Guardar</button>
+    </ul>
+</form>
+
+{% if messages %}
+    {% for message in messages %}
+        <script>
+            alert("{{ message }}");
+            window.history.back();
+        </script>       
+    {% endfor %}
+{% endif %}
+
 {% endblock %}
 
 

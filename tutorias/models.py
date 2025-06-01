@@ -8,7 +8,7 @@ class Tutorias(models.Model):
     profesor = models.ForeignKey(Profesor,on_delete=models.CASCADE)
     
     def __str__(self):
-        return f"{self.profesor}"
+        return f"{self.profesor.username} - {self.id }"
     
     class Meta:
         verbose_name = "Tutoría"
@@ -81,8 +81,8 @@ class TutoriaRegularizacion(models.Model):
 
 class TutoriaRecuperacion(models.Model):
     tutoria = models.ForeignKey(Tutorias,on_delete=models.CASCADE,default=None)
-    unidad_aprendizaje_recuperacion = models.CharField(max_length=100)
-    carrera_recuperacion = models.CharField(max_length=100)
+    unidad_aprendizaje_recuperacion = models.CharField(max_length=100,verbose_name="Unidad de aprendizaje")
+    carrera_recuperacion = models.CharField(max_length=100,verbose_name="Carrera")
     no_hombres_recuperacion = models.SmallIntegerField()
     no_mujeres_recuperacion = models.SmallIntegerField()
     lista_alumnos_recuperacion = models.CharField(max_length=100)

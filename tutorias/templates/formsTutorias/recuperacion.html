@@ -1,70 +1,48 @@
 {% extends "layouts/base.html" %}
 {% block content %}
 
-<h1 class="text-center">TUTORÍAS DE RECUPERACIÓN</h1>
+<h1 class="text-center">REGISTRAR TUTORÍA DE RECUPERACIÓN</h1>
 <h1>{{error}}</h1>
-<ul class="list-group">
-    <li class="list-group-item">
-        {% if user.is_authenticated %}
-            <p><a href="/administrador" class="btn btn-outline-primary"> Regresar </a></p>
-            <div class="row mb-3">
-                <div class="col">
-                    <form method="GET" class="input-group m-3" style="padding-right: 100px;">
-                        <input type="text" class="form-control text-dark" name="q" value="{{ query }}" placeholder="Buscar profesor...">
-                        <button type="submit" class="btn btn-outline-primary">Buscar</button>
-                    </form>
-                    <a class="btn btn-outline-danger ms-3 mt-3" href="/administrador/tutoria/recuperacion">Borrar busqueda y filtros</a>
+<!---------------------------------------------------------------------------------------------------------->
+<!------- Formulario de Regitro de las Tutorías Grupales --------------------------------------------------->
+<p><a href="/" class="btn btn-outline-primary"> Regresar </a></p>
+<form action="/registro/tutoria/recuperacion/" class="p-2" method="post">
+    {% csrf_token %}
+    <ul class="list-group">
+        <li class="list-group-item" name = "tutoria_recuperacion">
+            <div id="tutoriaRecuperacion">
+                <p><b>Instrucciones: </b>Favor de indicar unidad de aprendizaje y carrera</p>
+                <div class="form-group">
+                    <label class="form-label p-2" for="unidad_recuperacion">Unidad de aprendizaje en recuperación <b class="text-danger">*</b></label>
+                    <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="unidad_recuperacion" name="unidad_recuperacion">
                 </div>
-                <div class="col">
-                    <form method="POST">
-                        {% csrf_token %}
-                        <p>
-                            <label class="form-label">Seleccionar carreras:</label>
-                            <button type="submit" class="btn btn-outline-primary ms-4">Filtrar</button>
-                        </p>
-                        <input type="checkbox" name="carreras" value="isc" {% if "isc" in carreras_check %} checked {% endif %}> Ingeniería en Sistemas Computacionales<br>
-                        <input type="checkbox" name="carreras" value="iia" {% if "iia" in carreras_check %} checked {% endif %}> Ingeniería en Inteligencia Artificial<br>
-                        <input type="checkbox" name="carreras" value="lcd" {% if "lcd" in carreras_check %} checked {% endif %}> Licenciatura en Ciencia de Datos<br>
-                        <input type="checkbox" name="carreras" value="isisa" {% if "isisa" in carreras_check %} checked {% endif %}> ISISA<br>
-                    </form>
+                <div class="form-group">
+                    <label class="form-label p-2" for="carrera_recuperacion">Carrera <b class="text-danger">*</b></label>
+                    <select class="form-select text-dark" style="background-color: lightgray;" id="carrera_recuperacion" name="carrera_recuperacion">
+                        <option value="isc">Ingeniería en Sistemas Computacionales</option>
+                        <option value="iia">Ingeniería en Inteligencia Artificial</option>
+                        <option value="lcd">Licenciatura en Ciencia de Datos</option>
+                        <option value="isisa">ISISA</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label p-2" for="numero_hombres_recuperacion">Número de hombres <b class="text-danger">*</b></label>
+                    <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="numero_hombres_recuperacion" name="numero_hombres_recuperacion">
+                </div>
+                <div class="form-group">
+                    <label class="form-label p-2" for="numero_mujeres_regularizacion">Número de mujeres <b class="text-danger">*</b></label>
+                    <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="numero_mujeres_recuperacion" name="numero_mujeres_recuperacion">
+                </div>
+                <div class="form-group">
+                    <label class="form-label p-2" for="lista_alumnos_regularizacion">Incluya la liga al archivo en formato PDF con la lista de alumnos <b class="text-danger">*</b></label>
+                    <input type="text" class="form-control text-dark" style="background-color: lightgray;" id="lista_alumnos_recuperacion" name="lista_alumnos_recuperacion">
                 </div>
             </div>
-            <ul>
-                <li class="list-group-item">
-                    <p><b>Total de profesores: {{lista_profesores|length}}</b> </p>
-                </li>
-                {% for profesor, tutorias in lista_profesores.items %}
-                    <li class="card shadow-sm mb-4">
-                        <strong class="card-header bg-primary text-white fw-bold">Profesor(a):{{ profesor.nombre }}</strong> 
-                        <ul>
-                            {% for tutoria in tutorias %}
-                                <li>
-                                    <p><strong>Unidad de aprendizaje:</strong> {{ tutoria.unidad_aprendizaje_recuperacion }}</p>
-                                    <p><strong>Carrera:</strong>
-                                        {% if tutoria.carrera_recuperacion  == "isc" %}
-                                            Ingeniería en Sistemas Computacionales
-                                        {% elif tutoria.carrera_recuperacion == "iia" %}
-                                            Ingeniería en Inteligencia Artificial
-                                        {% elif tutoria.carrera_recuperacion == "lcd" %}
-                                            Licenciatura en Ciencia de Datos
-                                        {% elif tutoria.carrera_recuperacion == "isisa" %}
-                                            ISISA
-                                        {% else %}
-                                            {{ tutoria.carrera_recuperacion }}
-                                        {% endif %}
-                                    </p>
-                                    <p><strong>Número de hombres:</strong> {{ tutoria.no_hombres_recuperacion }}</p>
-                                    <p><strong>Número de mujeres:</strong> {{ tutoria.no_mujeres_recuperacion }}</p>
-                                    <p><a class="btn btn-outline-primary w-10" target="_blank" href="{{ tutoria.lista_alumnos_recuperacion }}">Lista de Alumnos</a></p>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    </li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-    </li>
-</ul>
+        </li>          
+        <button class="btn btn-primary">Guardar</button>
+    </ul>
+</form>
+
 {% endblock %}
 
 
