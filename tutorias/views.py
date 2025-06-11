@@ -4,7 +4,7 @@ from django.shortcuts import render
 
 from profesores.models import Profesor
 from .models import Tutorias,TutoriaGrupal,TutoriaPares,TutoriaIndividual,TutoriaMovilidad,TutoriaRegularizacion,TutoriaRecuperacion
-from .utils import falta_datos, listar_alumnos
+from .utils import falta_datos, listar_alumnos,periodo_actual
 from pprint import pprint
 
 #REGISTRO DE LAS TUTORÍAS ------------------------------------------------------------------
@@ -27,6 +27,7 @@ def registrar_tutoria(request,tipo):
             total_tutorias = len(TutoriaRecuperacion.objects.filter(tutoria__profesor=request.user))
         return render(request,f"formsTutorias/{tipo}.html",{"total_tutorias":total_tutorias})
     try:
+        
 #-------------------------------------------------------------------------------------------
 #------ GUARDAR TUTORÍAS GRUPALES ----------------------------------------------------------
         if tipo == "grupal":
@@ -51,7 +52,8 @@ def registrar_tutoria(request,tipo):
                     tutoria_valida = []
                     tutoria = Tutorias(
                         tipo = "Grupal",
-                        profesor = request.user
+                        profesor = request.user,
+                        periodo = periodo_actual()
                     )
                     tuto_grupal = TutoriaGrupal(
                         tutoria = tutoria,
@@ -90,7 +92,8 @@ def registrar_tutoria(request,tipo):
                     alumno_valido = []
                     tutoria = Tutorias(
                         tipo = "Pares",
-                        profesor = request.user
+                        profesor = request.user,
+                        periodo = periodo_actual()
                     )
                     tuto_pares = TutoriaPares(
                         tutoria = tutoria,
@@ -111,7 +114,8 @@ def registrar_tutoria(request,tipo):
             """ Se crearán unicamente una instacia de Tutoria y una de TutoriaIndivudual por cada profesor"""
             tutoria = Tutorias(
                 tipo = "Individual",
-                profesor = request.user
+                profesor = request.user,
+                periodo = periodo_actual()
             )
             tuto_individual = TutoriaIndividual(
                 tutoria = tutoria,
@@ -139,7 +143,8 @@ def registrar_tutoria(request,tipo):
             y una de TutoríaMovilidad """
             tutoria = Tutorias(
                 tipo = "Movilidad",
-                profesor = request.user
+                profesor = request.user,
+                periodo = periodo_actual()
             )
             tuto_movilidad = TutoriaMovilidad(
                 tutoria = tutoria,
@@ -155,7 +160,8 @@ def registrar_tutoria(request,tipo):
         if tipo == "regularizacion":
             tutoria = Tutorias(
                 tipo = "Regularización",
-                profesor = request.user
+                profesor = request.user,
+                periodo = periodo_actual()
             )
             tuto_regularizacion = TutoriaRegularizacion(
                 tutoria = tutoria,
@@ -173,7 +179,8 @@ def registrar_tutoria(request,tipo):
             """ Se crearán unicamente una instacia de Tutoria y una de TutoriaRecuperación por cada profesor"""
             tutoria = Tutorias.objects.create(
                 tipo = "Recuperación",
-                profesor = request.user
+                profesor = request.user,
+                periodo = periodo_actual()
             )
             tuto_recuperacion = TutoriaRecuperacion.objects.create(
                 tutoria = tutoria,
@@ -197,29 +204,28 @@ def eliminar_tutoria(request,id_tutoria):
         return render(request,"responseHTML/failure.html")
 
 @login_required
-def listar_tutorias_admin(request,tipo):
-    if tipo == "grupal":
+def listar_tutorias_admin(request,tipo,periodo):
+    if tipo == "grupales":
         tipo_tutoria = TutoriaGrupal
-        template = "grupales.html"
+        template = "viewsTutorias/grupales.html"
     elif tipo == "pares":
         tipo_tutoria = TutoriaPares
-        template = "pares.html"
-    elif tipo == "individual":
+        template = "viewsTutorias/pares.html"
+    elif tipo == "individuales":
         tipo_tutoria = TutoriaIndividual
-        template = "individual.html"
+        template = "viewsTutorias/individuales.html"
     elif tipo == "movilidad":
         tipo_tutoria = TutoriaMovilidad
-        template = "movilidad.html"
+        template = "viewsTutorias/movilidad.html"
     elif tipo == "recuperacion":
         tipo_tutoria = TutoriaRecuperacion
-        template = "recuperacion.html"
+        template = "viewsTutorias/recuperacion.html"
     elif tipo == "regularizacion":
         tipo_tutoria = TutoriaRegularizacion
-        template = "regularizacion.html"
-
+        template = "viewsTutorias/regularizacion.html"
     query = request.GET.get("q", "")
     resultados = Profesor.objects.filter(nombre__icontains=query) if query else Profesor.objects.all()
-    tutorias_filtradas = flitrar_datos(request,tipo_tutoria)
+    tutorias_filtradas = flitrar_datos(request,tipo_tutoria,periodo)
 
     alumnos_movilidad = {}
     lista_profesores = {}
@@ -242,7 +248,7 @@ def listar_tutorias_admin(request,tipo):
         'carreras_check' : request.POST.getlist("carreras"),
         'query':query,
         "alumnos_movilidad":alumnos_movilidad,
-        "lista": ["x1","x2","x3"]
+        "periodo":periodo
 	})
 
 @login_required
@@ -280,8 +286,8 @@ def listar_tutorias_user(request,tipo):
     return render(request,template,{"lista_tutorias": lista_tutorias, "alumnos": boletas_alumnos})
 
 @login_required
-def flitrar_datos(request,tipo_tutoria):
-    tutorias_filtradas = tipo_tutoria.objects.select_related('tutoria__profesor')
+def flitrar_datos(request,tipo_tutoria,periodo):
+    tutorias_filtradas = tipo_tutoria.objects.select_related('tutoria__profesor').filter(tutoria__periodo__nombre_periodo=periodo)
     if request.method == "POST":
         carreras_seleccionadas = request.POST.getlist("carreras")
         if carreras_seleccionadas:

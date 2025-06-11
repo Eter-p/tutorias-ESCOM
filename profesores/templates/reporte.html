@@ -1,0 +1,51 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+
+<h1 class="text-center display-6">REPORTE DE TUTORÍAS GRUPALES</h1>
+<div class="row my-3">
+    <div class="col">
+        <a href="/administrador/tutorias/grupales/{{ periodo }}" class="btn btn-outline-primary"> Regresar </a>
+    </div>
+    <div class="col text-end">
+        <form action="" method="post">
+            {% csrf_token %}
+            <button class="btn btn-success">Ver asignación de grupos</button>
+        </form>
+    </div>
+</div>
+
+<table class="table table-striped mt-2">
+    <thead>
+        <th scope="col">#</th>
+        <th scope="col">Fecha</th>
+        <th scope="col">Profesor</th>
+        <th scope="col">Grupo 1</th>
+        <th scope="col">Grupo 2</th>
+        <th scope="col">Grupo 3</th>
+        {% if mostrar %}
+            <th scope="col">Asignado</th>
+        {% endif %}
+    </thead>
+    <tbody>
+        {% for clave,grupos in lista_profesores.items %}
+            <tr>
+                <th scope="row">{{ forloop.counter }}</th>
+                {% for par in clave %}
+                    <td>{{ par }}</td>
+                {% endfor %}
+                {% for grupo in grupos %}
+                    {% if mostrar %}
+                        {% if grupo == grupos|last %}
+                            <td class="bg-success text-light">{{ grupo }}</td>
+                        {% else %}
+                            <td>{{ grupo }}</td>
+                        {% endif %}
+                    {% else %}
+                        <td>{{ grupo }}</td>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

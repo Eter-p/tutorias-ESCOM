@@ -1,5 +1,19 @@
 from django import forms
-from .models import Tutorias,TutoriaGrupal,TutoriaPares,TutoriaIndividual,TutoriaMovilidad,TutoriaRegularizacion,TutoriaRecuperacion
+from .models import Periodo,Tutorias,TutoriaGrupal,TutoriaPares,TutoriaIndividual,TutoriaMovilidad,TutoriaRegularizacion,TutoriaRecuperacion
+
+class FormPerido(forms.ModelForm):
+    class Meta:
+        model = Periodo
+        fields =[
+            "nombre_periodo",
+            "fecha_apertura",
+            "fecha_cierre"
+        ]
+        labels = {
+            "nombre_periodo": "Nombre del periodo",
+            "fecha_apertura": "Fecha de apertura",
+            "fecha_cierre": "Fecha de cierre"
+        }
 
 class FormTutorias(forms.ModelForm):
     class Meta:
@@ -7,11 +21,13 @@ class FormTutorias(forms.ModelForm):
         fields =[
             "tipo",
             "profesor",
+            "periodo",
             "fecha"
         ]
         labels = {
             "fecha": "Fecha de registro",
             "tipo": "Tipo de tutoría",
+            "periodo": "Periodo",
             "profesor": "Profesor"
         }
 

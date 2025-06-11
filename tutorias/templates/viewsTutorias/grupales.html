@@ -6,14 +6,14 @@
 <ul class="list-group">
     <li class="list-group-item">
         {% if user.is_superuser %}
-            <p><a href="/administrador" class="btn btn-outline-primary"> Regresar </a></p>
+            <p><a href="/administrador/?periodo={{ periodo }}" class="btn btn-outline-primary"> Regresar </a></p>
             <div class="row mb-3">
                 <div class="col">
                     <form method="GET" class="input-group m-3" style="padding-right: 100px;">
                         <input type="text" class="form-control text-dark" name="q" value="{{ query }}" placeholder="Buscar profesor...">
                         <button type="submit" class="btn btn-outline-primary">Buscar</button>
                     </form>
-                    <a class="btn btn-outline-danger ms-3 mt-3" href="/administrador/tutoria/grupal">Borrar busqueda y filtros</a>
+                    <a class="btn btn-outline-danger ms-3 mt-3" href="/administrador/tutorias/grupales/{{ periodo }}">Borrar busqueda y filtros</a>
                 </div>
                 <div class="col">
                     <form method="POST">
@@ -32,7 +32,15 @@
             
             <ul>
                 <li class="list-group-item">
-                    <p><b>Total de profesores: {{lista_profesores|length}}</b> </p>
+                    <div class="row">
+                        <div class="col">
+                            <p><b>Total de profesores: {{lista_profesores|length}}</b> </p>
+                        </div>
+                        <div class="col text-end">
+                            <a href="/administrador/tutorias/grupales/{{ periodo }}/reporte" class="btn btn-success">Ver reporte general</a>
+                        </div>
+
+                    </div>
                 </li>
                 {% for profesor, tutorias in lista_profesores.items %}
                     <li class="card shadow-sm mb-4">

@@ -6,7 +6,7 @@
 <ul class="list-group">
     <li class="list-group-item">
         {% if user.is_superuser %}
-            <p><a href="/administrador" class="btn btn-outline-primary"> Regresar </a></p>
+            <p><a href="/administrador/?periodo={{ periodo }}" class="btn btn-outline-primary"> Regresar </a></p>
             <form method="GET" class="input-group m-3" style="padding-right: 500px;">
                 <input type="text" class="form-control text-dark" name="q" value="{{ query }}" placeholder="Buscar profesor...">
                 <button type="submit" class="btn btn-outline-primary">Buscar</button>

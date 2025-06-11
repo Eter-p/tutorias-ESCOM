@@ -5,73 +5,73 @@
 	{% if user.is_authenticated %}
 		{% if user.is_superuser %}
 			<div class=" card col">
+				<h4>Esta sección es para el registro de tutorías si desea ver los registros haga clic en: </h4>
 				<a href="/administrador" class="btn btn-primary">Ir a administrador</a>
 			</div>
-		{% else %}
-			<div class="col card card-body text-center align-items-center" >
-				<p><h1 class="display-4">Registro de Tutorías</h1></p>
-				<div class="container py-3">
-					<div class="row pb-4" >
-						<div class="col border border-dark rounded-3 p-0 mx-2">
-							<h5 class="pb-3 bg-primary text-light border rounded-2 p-3">Grupal</h5>
-							<a class="list-group-item btn btn-success border border-dark rounded-3 mx-3 my-4 {% if total.grupal > 2 %} d-none {% endif %}" href="/registro/tutoria/grupal">
-								<h5 class="mb-3">Registar</h5>
-							</a>
-							<a class="list-group-item btn btn-success border border-dark rounded-3 mx-3 my-4" href="/tutorias/grupales">
-								<h5 class="mb-3">Ver registros</h5>
-							</a>
-						</div>
-						<div class="col border border-dark rounded-3 p-0 mx-2">
-							<h5 class="pb-3 bg-primary text-light border rounded-2 p-3">Individual</h5>
-							<a class="list-group-item btn btn-success border border-dark rounded-3 mx-3 my-4 {% if total.individual > 0 %} d-none {% endif %}" href="/registro/tutoria/individual">
-								<h5 class="mb-3">Registar</h5>
-							</a>
-							<a class="list-group-item btn btn-success border border-dark rounded-3 mx-3 my-4" href="/tutorias/individuales">
-								<h5 class="mb-3">Ver registros</h5>
-							</a>
-						</div>
-						<div class="col border border-dark rounded-3 p-0 mx-2">
-							<h5 class="pb-3 bg-primary text-light border rounded-2 p-3">Entre Pares</h5>
-							<a class="list-group-item btn btn-success border border-dark rounded-3 mx-3 my-4 {% if total.pares > 1 %} d-none {% endif %}" href="/registro/tutoria/pares">
-								<h5 class="mb-3">Registar</h5>
-							</a>
-							<a class="list-group-item btn btn-success border border-dark rounded-3 mx-3 my-4" href="/tutorias/pares">
-								<h5 class="mb-3">Ver registros</h5>
-							</a>
-						</div>
+		{% endif %}
+		<div class="col card card-body text-center align-items-center" >
+			<p><h1 class="display-4">Registro de Tutorías</h1></p>
+			<div class="container py-3">
+				<div class="row pb-4" >
+					<div class="col border border-dark rounded-3 p-0 mx-2">
+						<h5 class="pb-3 bg-primary text-light border rounded-2 p-3">Grupal</h5>
+						<a class="list-group-item btn btn-success border border-dark rounded-3 mx-3 my-4 {% if total.grupal > 2 %} d-none {% endif %}" href="/registro/tutoria/grupal">
+							<h5 class="mb-3">Registar</h5>
+						</a>
+						<a class="list-group-item btn btn-success border border-dark rounded-3 mx-3 my-4" href="/tutorias/grupales">
+							<h5 class="mb-3">Ver registros</h5>
+						</a>
 					</div>
-					<div class="row" >
-						<div class="col border border-dark rounded-3 p-0 mx-2">
-							<h5 class="pb-3 bg-primary text-light border rounded-2 p-3">De Regularización</h5>
-							<a class="list-group-item btn btn-success border border-dark rounded-3 mx-3 my-4 {% if total.regularizacion > 0 %} d-none {% endif %}" href="/registro/tutoria/regularizacion">
-								<h5 class="mb-3">Registar</h5>
-							</a>
-							<a class="list-group-item btn btn-success border border-dark rounded-3 mx-3 my-4" href="/tutorias/regularizacion">
-								<h5 class="mb-3">Ver registros</h5>
-							</a>
-						</div>
-						<div class="col border border-dark rounded-3 p-0 mx-2">
-							<h5 class="pb-3 bg-primary text-light border rounded-2 p-3">De Recuperación</h5>
-							<a class="list-group-item btn btn-success border border-dark rounded-3 mx-3 my-4 {% if total.recuperacion > 0 %} d-none {% endif %}" href="/registro/tutoria/recuperacion">
-								<h5 class="mb-3">Registar</h5>
-							</a>
-							<a class="list-group-item btn btn-success border border-dark rounded-3 mx-3 my-4" href="/tutorias/recuperacion">
-								<h5 class="mb-3">Ver registros</h5>
-							</a>
-						</div>
-						<div class="col border border-dark rounded-3 p-0 mx-2">
-							<h5 class="pb-3 bg-primary text-light border rounded-2 p-3">De Movilidad</h5>
-							<a class="list-group-item btn btn-success border border-dark rounded-3 mx-3 my-4 {% if total.movilidad > 0 %} d-none {% endif %}" href="/registro/tutoria/movilidad">
-								<h5 class="mb-3">Registar</h5>
-							</a>
-							<a class="list-group-item btn btn-success border border-dark rounded-3 mx-3 my-4" href="/tutorias/movilidad">
-								<h5 class="mb-3">Ver registros</h5>
-							</a>
-						</div>
+					<div class="col border border-dark rounded-3 p-0 mx-2">
+						<h5 class="pb-3 bg-primary text-light border rounded-2 p-3">Individual</h5>
+						<a class="list-group-item btn btn-success border border-dark rounded-3 mx-3 my-4 {% if total.individual > 0 %} d-none {% endif %}" href="/registro/tutoria/individual">
+							<h5 class="mb-3">Registar</h5>
+						</a>
+						<a class="list-group-item btn btn-success border border-dark rounded-3 mx-3 my-4" href="/tutorias/individuales">
+							<h5 class="mb-3">Ver registros</h5>
+						</a>
+					</div>
+					<div class="col border border-dark rounded-3 p-0 mx-2">
+						<h5 class="pb-3 bg-primary text-light border rounded-2 p-3">Entre Pares</h5>
+						<a class="list-group-item btn btn-success border border-dark rounded-3 mx-3 my-4 {% if total.pares > 1 %} d-none {% endif %}" href="/registro/tutoria/pares">
+							<h5 class="mb-3">Registar</h5>
+						</a>
+						<a class="list-group-item btn btn-success border border-dark rounded-3 mx-3 my-4" href="/tutorias/pares">
+							<h5 class="mb-3">Ver registros</h5>
+						</a>
+					</div>
+				</div>
+				<div class="row" >
+					<div class="col border border-dark rounded-3 p-0 mx-2">
+						<h5 class="pb-3 bg-primary text-light border rounded-2 p-3">De Regularización</h5>
+						<a class="list-group-item btn btn-success border border-dark rounded-3 mx-3 my-4 {% if total.regularizacion > 0 %} d-none {% endif %}" href="/registro/tutoria/regularizacion">
+							<h5 class="mb-3">Registar</h5>
+						</a>
+						<a class="list-group-item btn btn-success border border-dark rounded-3 mx-3 my-4" href="/tutorias/regularizacion">
+							<h5 class="mb-3">Ver registros</h5>
+						</a>
+					</div>
+					<div class="col border border-dark rounded-3 p-0 mx-2">
+						<h5 class="pb-3 bg-primary text-light border rounded-2 p-3">De Recuperación</h5>
+						<a class="list-group-item btn btn-success border border-dark rounded-3 mx-3 my-4 {% if total.recuperacion > 0 %} d-none {% endif %}" href="/registro/tutoria/recuperacion">
+							<h5 class="mb-3">Registar</h5>
+						</a>
+						<a class="list-group-item btn btn-success border border-dark rounded-3 mx-3 my-4" href="/tutorias/recuperacion">
+							<h5 class="mb-3">Ver registros</h5>
+						</a>
+					</div>
+					<div class="col border border-dark rounded-3 p-0 mx-2">
+						<h5 class="pb-3 bg-primary text-light border rounded-2 p-3">De Movilidad</h5>
+						<a class="list-group-item btn btn-success border border-dark rounded-3 mx-3 my-4 {% if total.movilidad > 0 %} d-none {% endif %}" href="/registro/tutoria/movilidad">
+							<h5 class="mb-3">Registar</h5>
+						</a>
+						<a class="list-group-item btn btn-success border border-dark rounded-3 mx-3 my-4" href="/tutorias/movilidad">
+							<h5 class="mb-3">Ver registros</h5>
+						</a>
 					</div>
 				</div>
 			</div>
-		{% endif %}
+		</div>
 	{% else %}
 		<div class="card card-body">
 			<h1 class="display-4 text-center">¡Bienvenido al Sistema de registro de Tutorías!</h1>

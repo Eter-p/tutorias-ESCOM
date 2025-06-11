@@ -1,13 +1,18 @@
 from django.contrib import admin
 
-from .models import Tutorias,TutoriaGrupal,TutoriaPares,TutoriaIndividual,TutoriaMovilidad,TutoriaRegularizacion,TutoriaRecuperacion
-from .forms import FormTutorias,FormTutoriaGrupal,FormTutoriaPares,FormTutoriaIndividual,FormTutoriaMovilidad,FormTutoriaRegularizacion,FormTutoriaRecuperacion
+from .models import Periodo,Tutorias,TutoriaGrupal,TutoriaPares,TutoriaIndividual,TutoriaMovilidad,TutoriaRegularizacion,TutoriaRecuperacion
+from .forms import FormPerido,FormTutorias,FormTutoriaGrupal,FormTutoriaPares,FormTutoriaIndividual,FormTutoriaMovilidad,FormTutoriaRegularizacion,FormTutoriaRecuperacion
 
+class PeriodoAdmin(admin.ModelAdmin):
+    form = FormPerido
+    list_display = ("nombre_periodo","fecha_apertura","fecha_cierre")
+    search_fields = ('nombre_perido',)
+    
 class TutoriasAdmin(admin.ModelAdmin):
     form = FormTutorias
-    list_display = ("mostrar_tutoria","fecha","tipo","profesor")
+    list_display = ("mostrar_tutoria","fecha","periodo","tipo","profesor")
     search_fields = ('profesor__nombre',)
-    list_filter = ('tipo',)
+    list_filter = ('tipo','periodo')
     
     def mostrar_tutoria(self, obj):
         return str(obj)
@@ -46,6 +51,7 @@ class TutoriaRecuperacionAdmin(admin.ModelAdmin):
     search_fields = ("tutoria__profesor__nombre","unidad_aprendizaje_recuperacion")
     list_filter = ("carrera_recuperacion",)
 
+admin.site.register(Periodo,PeriodoAdmin)
 admin.site.register(Tutorias,TutoriasAdmin)
 admin.site.register(TutoriaGrupal,TutoriaGrupalAdmin)
 admin.site.register(TutoriaPares,TutoriaParesAdmin)

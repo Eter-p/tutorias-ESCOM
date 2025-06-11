@@ -1,15 +1,17 @@
 from django.contrib.auth import login,logout,authenticate
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render,get_object_or_404
+from django.shortcuts import render,redirect,get_object_or_404
 from pprint import pprint
 
-from django.core.mail import send_mail
-from django.shortcuts import render,redirect,get_object_or_404
 from .models import Profesor
-from tutorias.models import TutoriaGrupal,TutoriaPares,TutoriaIndividual,TutoriaMovilidad,TutoriaRegularizacion,TutoriaRecuperacion
+from .utils import profesores_ha_registrado,asignar_grupos
+from tutorias.utils import periodo_actual
+from tutorias.models import Periodo,TutoriaGrupal,TutoriaPares,TutoriaIndividual,TutoriaMovilidad,TutoriaRegularizacion,TutoriaRecuperacion
 
 def test(request):
     return render(request,"responseHTML/success.html",{"saludo":"hola  mundo"})
+
+
 
 def inicio(request):
     """ En la pantalla de inicio se hace una comprobacion de cuantas y cuales tutorías ha registrado el usuario """
@@ -20,38 +22,40 @@ def inicio(request):
         
         for tipo_tutoria,total_turoria in zip(tipos_tutorias,totales_tutorias):
             conteo_tutorias[total_turoria]= len(tipo_tutoria.objects.filter(tutoria__profesor=request.user))
-        # pprint(conteo_tutorias)
     return render(request,"inicio.html",{"total":conteo_tutorias})
 
 def inicio_administrador(request):
-    if request.method == "GET":
-        return render(request,"administrador.html")
-    
-    tipos_tutorias = [TutoriaGrupal,TutoriaPares,TutoriaIndividual,TutoriaMovilidad,TutoriaRegularizacion,TutoriaRecuperacion]
+    """ En la pantalla de inicio se mostrará el numero de los usuarios que ya registraron tutorías """
+    tipos_tutorias = [TutoriaGrupal,TutoriaIndividual,TutoriaPares,TutoriaRegularizacion,TutoriaRecuperacion,TutoriaMovilidad]
     totales_tutorias = ["total_grupales","total_individuales","total_pares","total_regularizacion","total_recuperacion","total_movilidad"]
     
     conteo_tutorias = {}
-    
+    """ Para cada tipo de tutoría se hara el conteo de profesores que registaron dicha tutoría """
+    periodo_selecionado = request.GET.get('periodo')
     for tipo_tutoria,total_turoria in zip(tipos_tutorias,totales_tutorias):
         lista_profesores = []
-        for instancia in tipo_tutoria.objects.select_related('tutoria__profesor'):
+        for instancia in tipo_tutoria.objects.select_related('tutoria__profesor').filter(tutoria__periodo__nombre_periodo=periodo_selecionado):
             profesor = instancia.tutoria.profesor
             if profesor not in lista_profesores:
                 lista_profesores.append(profesor)
         conteo_tutorias[total_turoria] = len(lista_profesores)
-        
+    
     return render(request,"administrador.html",{
-        "total_profesores": len(User.objects.all()),
-        "totales_tutorias": conteo_tutorias
+        "total_profesores": len(profesores_ha_registrado(periodo_selecionado)),
+        "totales_tutorias": conteo_tutorias,
+        "periodos":Periodo.objects.all(),
+        "query": periodo_selecionado
     })
 
 @login_required
-def profesores(request):
+def profesores(request,periodo):
     query = request.GET.get("q", "")
-    resultados = User.objects.filter(nombre__icontains=query) if query else User.objects.all()
+    profesores = profesores_ha_registrado(periodo)
+    resultados = profesores.filter(nombre__icontains=query) if query else profesores
     if request.method == "GET":
         return render(request,"profesores.html",{
             "lista_profesores": resultados,
+            "periodo":periodo,
             'query':query,
             "mostrar":False
         })
@@ -59,7 +63,7 @@ def profesores(request):
     tt = ["grupal","pares","individual","movilidad","regularizacion","recuperacion"]
     
     profesor_seleccionado = request.POST.get("profesor_seleccionado")
-    pr = User.objects.get(nombre=profesor_seleccionado)
+    pr = Profesor.objects.get(nombre=profesor_seleccionado)
     
     tutorias_asociadas = {}
     for tutorias,t in zip(tipos_tutorias,tt):
@@ -76,10 +80,60 @@ def profesores(request):
         "profesor_seleccionado":profesor_seleccionado,
         "tutorias_asociadas":tutorias_asociadas,
         "alumnos_movilidad": alumnos_movilidad,
+        "periodo":periodo,
         'query':query,
         "mostrar":True
     })
 
+def reporte(request,periodo):
+    """ Obtenemos todas las tutorias del periodo selecionado """    
+    tutorias_flitardas = TutoriaGrupal.objects.filter(tutoria__periodo__nombre_periodo=periodo)
+    """ Se consturira un diccionario con un tupla fecha-profesor como clave y una lista de sus grupos como definicion
+        {
+            (fecha_ultimo_registro_1, nombre_profesor_1) : [grupo_1,grupo_2,grupo_3],
+            (fecha_ultimo_registro_2, nombre_profesor_2) : [grupo_1,grupo_2,grupo_3],
+            ...
+        }
+    """
+    """ Primero obtenemos la informacion del profesor con sus respectivos grupos registrados """
+    primera_lista = {}
+    for instancia_tutoria in tutorias_flitardas.select_related("tutoria__profesor"):
+        profesor = instancia_tutoria.tutoria.profesor
+        if profesor not in primera_lista:
+            primera_lista[profesor] = []
+        primera_lista[profesor].append(instancia_tutoria)
+    """ Ahora reconstruimos el diccionario con la fecha de su ultimo grupo registrado y agregando
+    una X a los grupos que le falto por registrar """
+    tutorias_grupales = {}
+    for profesor,grupos in primera_lista.items():
+        clave = (grupos[-1].tutoria.fecha,profesor)
+        tutorias_grupales[clave] = []
+        for grupo in grupos:
+            tutorias_grupales[clave].append(grupo.grupo)
+        while len(tutorias_grupales[clave])<3:
+            tutorias_grupales[clave].append("X")
+    tutorias_grupales = dict(sorted(tutorias_grupales.items(), key=lambda item: item[0][0]))
+    if request.method == "GET":
+        return render(request,"reporte.html",{"lista_profesores":tutorias_grupales,"periodo":periodo,"mostrar":False})
+    
+    grupos_asignados = asignar_grupos(tutorias_grupales)
+    
+    for nombre, grupo in grupos_asignados:
+        for clave in tutorias_grupales:  # Recorrer las claves (tuplas)
+            if clave[1] == nombre:  # Comprobar si el nombre coincide
+                tutorias_grupales[clave].append(grupo)
+                break  # Una vez encontrado, no es necesario seguir buscando
+
+    return render(request,"reporte.html",{
+        "lista_profesores":tutorias_grupales,
+        "periodo":periodo,
+        "grupos_asignados":grupos_asignados,
+        "mostrar":True,
+    })
+    
+    
+    
+        
 #ELIMINAR REGISTRO DEL PROFESOR Y SUS TUTORÍAS -------------  ----------------------------------
 def eliminar_profesor(request,profesor_id):
     try:
@@ -142,16 +196,3 @@ def signin(request):
 def signout(request):
     logout(request)
     return redirect("inicio")
-
-
-def enviar_correo(id,tipo,correo):
-	asunto = tipo
-	mensaje = "Guarda este numero en caso de necesitarlo: "+str(id)
-	destinatario = correo
-	send_mail(
-		asunto,
-		mensaje,
-		'hernandez.hernandez.fabian@gmail.com',  # Desde este correo
-		[destinatario],  # A este correo
-		fail_silently=False,
-	)

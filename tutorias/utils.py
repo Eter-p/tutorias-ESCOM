@@ -1,7 +1,18 @@
+from django.utils.timezone import now
+from .models import Periodo
+
+def periodo_actual():
+    periodo_actual = None
+    for periodo in Periodo.objects.all():
+        if now() < periodo.fecha_cierre:
+            periodo_actual = periodo
+    return periodo_actual
+
 # Para cada conjunto de datos (columna) se verifica:
 # Si todos los datos estan completos, regresa False (no faltan datos)
 # Si todos los datos estan vacios, regresa False (se ignora el caso)
 # Si hay algunos campos vacios y otros no, regresa True (faltan datos)
+
 def falta_datos(tabla_datos):
     for i in range(len(tabla_datos[0])):
         exiten_datos = []

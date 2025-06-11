@@ -2,10 +2,23 @@ from django.db import models
 from django.utils.timezone import now
 from profesores.models import Profesor
 
+class Periodo(models.Model):
+    nombre_periodo = models.CharField(max_length=100,null=True,blank=True,default="202_-_")
+    fecha_apertura = models.DateTimeField(null=True,blank=True,default=now)
+    fecha_cierre = models.DateTimeField(null=True,blank=True,default=now)
+    
+    def __str__(self):
+        return f"{self.nombre_periodo}"
+    
+    class Meta:
+        verbose_name = "Periodo"
+        verbose_name_plural = "Periodos"
+
 class Tutorias(models.Model):
+    periodo = models.ForeignKey(Periodo,on_delete=models.CASCADE,blank=True,null=True)
+    profesor = models.ForeignKey(Profesor,on_delete=models.CASCADE)
     tipo = models.CharField(max_length=15)
     fecha = models.DateTimeField(null=True,blank=True,default=now)
-    profesor = models.ForeignKey(Profesor,on_delete=models.CASCADE)
     
     def __str__(self):
         return f"{self.profesor.username} - {self.id }"

@@ -6,7 +6,7 @@
 	
 </div>
 <div class="row">
-	<p><a href="/administrador" class="btn btn-outline-primary"> Regresar </a></p>
+	<p><a href="/administrador/?periodo={{ periodo }}" class="btn btn-outline-primary"> Regresar </a></p>
 	<div class="col">
 		<form method="GET" class="input-group m-3" style="padding-right: 100px;">
 			<input type="text" class="form-control text-dark" name="q" value="{{ query }}" placeholder="Buscar profesor...">
@@ -14,15 +14,15 @@
 		</form>
 	</div>
 	<div class="col">
-		<p class="pt-3"><a class="btn btn-outline-danger" href="/administrador/profesores">Borrar busqueda</a></p>
+		<p class="pt-3"><a class="btn btn-outline-danger" href="/administrador/profesores/{{ periodo }}">Borrar busqueda</a></p>
 	</div>
 </div>
 <div class="row">
-	<div class="col-4">
+	<div class="col-5">
 		<form method="post" action="">
 			{% csrf_token %}
 			<h5>Nombre: </h5>
-			<div class="btn-group-vertical mx-5" role="group" aria-label="Vertical button group">
+			<div class="btn-group-vertical mx-4" role="group" aria-label="Vertical button group">
 				{% for profesor in lista_profesores %}
 					<button type="submit" class="btn btn-{% if profesor.nombre == profesor_seleccionado %}primary{% else %}outline-primary {% endif %} px-5" name="profesor_seleccionado" value="{{ profesor }}" >{{ profesor }}</button>
 				{% endfor %}
