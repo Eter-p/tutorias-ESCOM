@@ -19,7 +19,7 @@ def profesores_ha_registrado(periodo_selecionado):
         conteo_tutorias += len(TutoriaMovilidad.objects.filter(tutoria__profesor=profesor,tutoria__periodo__nombre_periodo=periodo_selecionado))
         if conteo_tutorias == 0:
             lista_profesores = lista_profesores.exclude(id=profesor.id)
-    return lista_profesores
+    return lista_profesores.order_by("nombre")
 
 def asignar_grupos(tutorias_grupales):
     """ Obtener el registro de tutorias ordenado pero sin las fechas """

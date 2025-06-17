@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<h1 class="text-center pb-5">LISTADO DE PROFESORES</h1>
+<h1 class="display-6 text-center pb-5">LISTADO DE PROFESORES</h1>
 	
 </div>
 <div class="row">
@@ -24,12 +24,12 @@
 			<h5>Nombre: </h5>
 			<div class="btn-group-vertical mx-4" role="group" aria-label="Vertical button group">
 				{% for profesor in lista_profesores %}
-					<button type="submit" class="btn btn-{% if profesor.nombre == profesor_seleccionado %}primary{% else %}outline-primary {% endif %} px-5" name="profesor_seleccionado" value="{{ profesor }}" >{{ profesor }}</button>
+					<button type="submit" class="btn btn-{% if profesor.nombre == profesor_clicado %}primary{% else %}outline-primary {% endif %} px-5 text-start" name="profesor_seleccionado" value="{{ profesor }}" >{{ profesor }}</button>
 				{% endfor %}
 			</div>
 		</form>
 	</div>
-	{% if mostrar %}
+	{% if mostrar_tutorias %}
 		<div class="col">
 			<h5>Tutorías registradas: </h5>
 			{% for tipo,tutorias in tutorias_asociadas.items %}
@@ -157,6 +157,10 @@
 					{% endif %}
 				{% endif %}
 			{% endfor %}
+		</div>
+	{% else %}
+		<div class="col">
+			<h5 class="text-center">Haga clic sobre un profesor para mostrar sus tutorías</h5>
 		</div>
 	{% endif %}
 	

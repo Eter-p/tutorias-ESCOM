@@ -22,9 +22,6 @@
         <th scope="col">Grupo 1</th>
         <th scope="col">Grupo 2</th>
         <th scope="col">Grupo 3</th>
-        {% if mostrar %}
-            <th scope="col">Asignado</th>
-        {% endif %}
     </thead>
     <tbody>
         {% for clave,grupos in lista_profesores.items %}
@@ -35,13 +32,15 @@
                 {% endfor %}
                 {% for grupo in grupos %}
                     {% if mostrar %}
-                        {% if grupo == grupos|last %}
-                            <td class="bg-success text-light">{{ grupo }}</td>
-                        {% else %}
-                            <td>{{ grupo }}</td>
+                        {% if not forloop.last %}
+                            {% if grupo == grupos|last %}
+                                <td class="bg-success text-light text-center">{{ grupo }}</td>
+                            {% else %}
+                                <td class="text-center">{{ grupo }}</td>
+                            {% endif %}
                         {% endif %}
                     {% else %}
-                        <td>{{ grupo }}</td>
+                        <td class="text-center">{{ grupo }}</td>
                     {% endif %}
                 {% endfor %}
             </tr>

@@ -6,7 +6,14 @@
 <ul class="list-group">
     <li class="list-group-item">
         {% if user.is_superuser %}
-            <p><a href="/administrador/?periodo={{ periodo }}" class="btn btn-outline-primary"> Regresar </a></p>
+            <div class="row">
+                <div class="col">
+                    <a href="/administrador/?periodo={{ periodo }}" class="btn btn-outline-primary"> Regresar </a>
+                </div>
+                <div class="col text-end">
+                   <a href="/administrador/tutorias/grupales/{{ periodo }}/reporte" class="btn btn-success">Ver reporte general</a>
+                </div>
+            </div>
             <div class="row mb-3">
                 <div class="col">
                     <form method="GET" class="input-group m-3" style="padding-right: 100px;">
@@ -36,9 +43,7 @@
                         <div class="col">
                             <p><b>Total de profesores: {{lista_profesores|length}}</b> </p>
                         </div>
-                        <div class="col text-end">
-                            <a href="/administrador/tutorias/grupales/{{ periodo }}/reporte" class="btn btn-success">Ver reporte general</a>
-                        </div>
+                        
 
                     </div>
                 </li>

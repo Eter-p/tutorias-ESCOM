@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
-from profesores.models import Profesor
+from profesores.utils import profesores_ha_registrado
 from .models import Tutorias,TutoriaGrupal,TutoriaPares,TutoriaIndividual,TutoriaMovilidad,TutoriaRegularizacion,TutoriaRecuperacion
 from .utils import falta_datos, listar_alumnos,periodo_actual
 from pprint import pprint
@@ -223,8 +223,11 @@ def listar_tutorias_admin(request,tipo,periodo):
     elif tipo == "regularizacion":
         tipo_tutoria = TutoriaRegularizacion
         template = "viewsTutorias/regularizacion.html"
+
+    profesores = profesores_ha_registrado(periodo)
+
     query = request.GET.get("q", "")
-    resultados = Profesor.objects.filter(nombre__icontains=query) if query else Profesor.objects.all()
+    resultados = profesores.filter(nombre__icontains=query) if query else profesores
     tutorias_filtradas = flitrar_datos(request,tipo_tutoria,periodo)
 
     alumnos_movilidad = {}
@@ -305,5 +308,5 @@ def flitrar_datos(request,tipo_tutoria,periodo):
                     tutorias_filtradas = tutorias_filtradas | tipo_tutoria.objects.select_related('tutoria__profesor').filter(carrera_regularizacion=carrera)
                 elif tipo_tutoria == TutoriaRecuperacion:
                     tutorias_filtradas = tutorias_filtradas | tipo_tutoria.objects.select_related('tutoria__profesor').filter(carrera_recuperacion=carrera)
-    return tutorias_filtradas
+    return tutorias_filtradas.order_by("tutoria__profesor__nombre")
     

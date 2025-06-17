@@ -48,41 +48,46 @@ def inicio_administrador(request):
     })
 
 @login_required
-def profesores(request,periodo):
+def listar_profesores(request,periodo):
+    """ Obtenemos y filtramos todos los usuarios que ya registraron tutorías en el periodo seleccionado """
     query = request.GET.get("q", "")
     profesores = profesores_ha_registrado(periodo)
-    resultados = profesores.filter(nombre__icontains=query) if query else profesores
+    lista_profesores = profesores.filter(nombre__icontains=query) if query else profesores
     if request.method == "GET":
         return render(request,"profesores.html",{
-            "lista_profesores": resultados,
+            "lista_profesores": lista_profesores,
             "periodo":periodo,
             'query':query,
-            "mostrar":False
+            "mostrar_tutorias":False
         })
+        
+    """ Si se da clic sobre un nombre se envia un fomulario con el nombre  """
+    profesor_clicado = request.POST.get("profesor_seleccionado")
+
+    """ Obtenemos todas las tutorias relacionadas a ese profesor """
+    profesor_seleccionado = Profesor.objects.get(nombre=profesor_clicado)
     tipos_tutorias = [TutoriaGrupal,TutoriaPares,TutoriaIndividual,TutoriaMovilidad,TutoriaRegularizacion,TutoriaRecuperacion]
-    tt = ["grupal","pares","individual","movilidad","regularizacion","recuperacion"]
-    
-    profesor_seleccionado = request.POST.get("profesor_seleccionado")
-    pr = Profesor.objects.get(nombre=profesor_seleccionado)
-    
+    nombres_tutorias = ["grupal","pares","individual","movilidad","regularizacion","recuperacion"]
     tutorias_asociadas = {}
-    for tutorias,t in zip(tipos_tutorias,tt):
-        tutorias_asociadas[f"tutoria_{t}"]=tutorias.objects.filter(tutoria__profesor=pr)
+    for tutorias,nombre in zip(tipos_tutorias,nombres_tutorias):
+        tutorias_asociadas[f"tutoria_{nombre}"]=tutorias.objects.filter(tutoria__profesor=profesor_seleccionado)
     
+    """ Si el tipo de tutoria es de movilidad adicionalmente se enviará la infomación con un mejor formato """
     movilidad = tutorias_asociadas["tutoria_movilidad"]
     alumnos_movilidad = {}
     if movilidad:
         for alumno_m in movilidad[0].boleta_nombre.split(";"):
             boleta,nombre = alumno_m.split(",")
             alumnos_movilidad[boleta] = nombre
+    
     return render(request,"profesores.html",{
-        "lista_profesores": resultados,
-        "profesor_seleccionado":profesor_seleccionado,
+        "lista_profesores": lista_profesores,
+        "profesor_clicado":profesor_clicado,
         "tutorias_asociadas":tutorias_asociadas,
         "alumnos_movilidad": alumnos_movilidad,
         "periodo":periodo,
         'query':query,
-        "mostrar":True
+        "mostrar_tutorias":True
     })
 
 def reporte(request,periodo):
