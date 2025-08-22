@@ -1,28 +1,37 @@
+from datetime import datetime
 from django.contrib.auth import login,logout,authenticate
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render,redirect,get_object_or_404
+from django.http import JsonResponse
+from django.utils.timezone import now,make_aware
 from pprint import pprint
 
 from .models import Profesor
 from .utils import profesores_ha_registrado,asignar_grupos
 from tutorias.utils import periodo_actual
 from tutorias.models import Periodo,TutoriaGrupal,TutoriaPares,TutoriaIndividual,TutoriaMovilidad,TutoriaRegularizacion,TutoriaRecuperacion
+from tutorias.forms import FormPerido
 
 def test(request):
     return render(request,"responseHTML/success.html",{"saludo":"hola  mundo"})
-
-
 
 def inicio(request):
     """ En la pantalla de inicio se hace una comprobacion de cuantas y cuales tutorías ha registrado el usuario """
     conteo_tutorias = {}
     if request.user.is_authenticated:
         tipos_tutorias = [TutoriaGrupal,TutoriaIndividual,TutoriaPares,TutoriaRegularizacion,TutoriaRecuperacion,TutoriaMovilidad]
-        totales_tutorias = ["grupal","individual","pares","regularizacion","recuperacion","movilidad"]
+        nombre_tutorias = ["grupal","individual","pares","regularizacion","recuperacion","movilidad"]
+        max_tutorias = [3,1,2,1,1,1]
         
-        for tipo_tutoria,total_turoria in zip(tipos_tutorias,totales_tutorias):
-            conteo_tutorias[total_turoria]= len(tipo_tutoria.objects.filter(tutoria__profesor=request.user))
-    return render(request,"inicio.html",{"total":conteo_tutorias})
+        periodo = periodo_actual()
+        if periodo == None:
+            periodo = Periodo.objects.latest("fecha_cierre")
+        print(periodo)
+
+        for tipo_tutoria,nombre_turoria,maximo in zip(tipos_tutorias,nombre_tutorias,max_tutorias):
+            conteo_tutorias[nombre_turoria]= maximo-len(tipo_tutoria.objects.filter(tutoria__profesor=request.user,tutoria__periodo=periodo))
+        return render(request,"inicio.html",{"restante":conteo_tutorias,"fecha":now(),"periodo":periodo})
+    return render(request,"inicio.html")
 
 def inicio_administrador(request):
     """ En la pantalla de inicio se mostrará el numero de los usuarios que ya registraron tutorías """
@@ -90,6 +99,124 @@ def listar_profesores(request,periodo):
         "mostrar_tutorias":True
     })
 
+@login_required
+def estadisticas(request,periodo):
+    return render(request,"estadisticas.html",{"periodo":periodo})
+
+@login_required
+def get_char(request,periodo):
+    conteo_tutorias = {}
+    tipos_tutorias = [TutoriaGrupal,TutoriaIndividual,TutoriaPares,TutoriaRegularizacion,TutoriaRecuperacion,TutoriaMovilidad]
+    nombres_tutorias = ["grupales","individuales","pares","regularizacion","recuperacion","movilidad"]
+    for tipo_tutoria,nombre_tutorias in zip(tipos_tutorias,nombres_tutorias):
+        lista_profesores = []
+        contador_alumnos = 0
+        for instancia in tipo_tutoria.objects.select_related('tutoria__profesor').filter(tutoria__periodo__nombre_periodo=periodo):
+            profesor = instancia.tutoria.profesor
+            if profesor not in lista_profesores:
+                lista_profesores.append(profesor)
+                if tipo_tutoria == TutoriaGrupal:
+                    contador_alumnos = contador_alumnos + int (instancia.no_hombres_grupal) + int(instancia.no_mujeres_grupal)
+            if tipo_tutoria == TutoriaIndividual:
+                contador_alumnos = contador_alumnos + int (instancia.no_hombres_individual) + int(instancia.no_mujeres_individual)
+            if tipo_tutoria == TutoriaPares:
+                contador_alumnos = contador_alumnos + 1
+            if tipo_tutoria == TutoriaRegularizacion:
+                contador_alumnos = contador_alumnos + int (instancia.no_hombres_regularizacion) + int(instancia.no_mujeres_regularizacion)
+            if tipo_tutoria == TutoriaRecuperacion:
+                contador_alumnos = contador_alumnos + int (instancia.no_hombres_recuperacion) + int(instancia.no_mujeres_recuperacion)
+            if tipo_tutoria == TutoriaMovilidad:
+                contador_alumnos = contador_alumnos + int (instancia.no_hombres_movilidad) + int(instancia.no_mujeres_movilidad)
+        conteo_tutorias["profesores_"+nombre_tutorias] = len(lista_profesores)
+        conteo_tutorias["alumnos_"+nombre_tutorias] = contador_alumnos
+    
+    individales = 0
+    for tutoria in TutoriaIndividual.objects.filter(tutoria__periodo__nombre_periodo=periodo):
+        individales = individales + int (tutoria.no_hombres_individual) + int(tutoria.no_mujeres_individual)
+        
+    option_grupos = {
+        "title": {
+            "text": "Número de profesores que registarón tutorías",
+            "subtext": f"Periodo {periodo}",
+            "left": 'center',
+            "textStyle":{"fontSize":20}
+        },
+        "tooltip": {
+            "trigger": "item",
+            },
+        "legend": {
+            "orient": 'vertical',
+            "left": 'left'
+        },
+        "series": [{
+            "type": 'pie',
+            "radius": '75%',
+            "data": [
+                { "value": conteo_tutorias["profesores_grupales"], "name": 'Grupales'},
+                { "value": conteo_tutorias["profesores_individuales"], "name": 'Individuales'},
+                { "value": conteo_tutorias["profesores_pares"], "name": 'Pares'},
+                { "value": conteo_tutorias["profesores_regularizacion"], "name": 'Regularización'},
+                { "value": conteo_tutorias["profesores_recuperacion"], "name": 'Recuperación'},
+                { "value": conteo_tutorias["profesores_movilidad"], "name": 'Movilidad'}
+            ],
+            "label": {
+                "fontSize": 16,
+                "formatter":" {b}: {c}"
+            },
+            "emphasis": {
+                "itemStyle": {
+                "shadowBlur": 10,
+                "shadowOffsetX": 0,
+                "shadowColor": 'rgba(0, 0, 0, 0.5)'
+                }
+            }
+        }]
+    }
+    
+    option_alumnos = {
+        "title": {
+            "text": "Número de alumnos registrados",
+            "subtext": f"Periodo {periodo}",
+            "left": 'center',
+            "textStyle":{"fontSize":20}
+        },
+        "tooltip": {
+            "trigger": "item",
+            },
+        "legend": {
+            "orient": 'vertical',
+            "left": 'left'
+        },
+        "series": [{
+            "type": 'pie',
+            "radius": '75%',
+            "data": [
+                { "value": conteo_tutorias["alumnos_grupales"], "name": 'Grupales'},
+                { "value": conteo_tutorias["alumnos_individuales"], "name": 'Individuales'},
+                { "value": conteo_tutorias["alumnos_pares"], "name": 'Pares'},
+                { "value": conteo_tutorias["alumnos_regularizacion"], "name": 'Regularización'},
+                { "value": conteo_tutorias["alumnos_recuperacion"], "name": 'Recuperación'},
+                { "value": conteo_tutorias["alumnos_movilidad"], "name": 'Movilidad'},
+            ],
+            "label": {
+                "fontSize": 16,
+                "formatter":" {b}: {c}"
+            },
+            "emphasis": {
+                "itemStyle": {
+                "shadowBlur": 10,
+                "shadowOffsetX": 0,
+                "shadowColor": 'rgba(0, 0, 0, 0.5)'
+                }
+            }
+        }]
+    }
+    return JsonResponse({
+        "grupos": option_grupos,
+        "alumnos": option_alumnos
+    })
+
+@login_required
 def reporte(request,periodo):
     """ Obtenemos todas las tutorias del periodo selecionado """    
     tutorias_flitardas = TutoriaGrupal.objects.filter(tutoria__periodo__nombre_periodo=periodo)
@@ -118,16 +245,21 @@ def reporte(request,periodo):
         while len(tutorias_grupales[clave])<3:
             tutorias_grupales[clave].append("X")
     tutorias_grupales = dict(sorted(tutorias_grupales.items(), key=lambda item: item[0][0]))
+
     if request.method == "GET":
         return render(request,"reporte.html",{"lista_profesores":tutorias_grupales,"periodo":periodo,"mostrar":False})
     
     grupos_asignados = asignar_grupos(tutorias_grupales)
-    
+        
     for nombre, grupo in grupos_asignados:
-        for clave in tutorias_grupales:  # Recorrer las claves (tuplas)
-            if clave[1] == nombre:  # Comprobar si el nombre coincide
+        for tutoria in primera_lista[nombre]:
+            if grupo == tutoria.grupo:
+                tutoria.tutoria_asignada = True
+                tutoria.save()
+        for clave in tutorias_grupales:  
+            if clave[1] == nombre:  
                 tutorias_grupales[clave].append(grupo)
-                break  # Una vez encontrado, no es necesario seguir buscando
+                break 
 
     return render(request,"reporte.html",{
         "lista_profesores":tutorias_grupales,
@@ -135,10 +267,44 @@ def reporte(request,periodo):
         "grupos_asignados":grupos_asignados,
         "mostrar":True,
     })
-    
-    
-    
-        
+
+def configuracion(request):
+    if request.method == "GET":
+        periodos = Periodo.objects.all()
+        return render(request,"settings.html",{
+            "periodos":periodos,
+        })
+    try: 
+        if "periodo_id" in request.POST:
+            periodo = get_object_or_404(Periodo, id=request.POST["periodo_id"])
+            nombre_nuevo = request.POST.get("nombre_periodo").strip()
+            fecha_apertura = datetime.strptime(request.POST.get("fecha_apertura"), "%Y-%m-%dT%H:%M")
+            fecha_cierre = datetime.strptime(request.POST.get("fecha_cierre"), "%Y-%m-%dT%H:%M")
+            if not nombre_nuevo:
+                raise ValueError("El nombre del periodo no puede estar vacío.")
+            if fecha_apertura >= fecha_cierre:
+                raise ValueError("La fecha de apertura debe ser anterior a la de cierre.")
+            periodo.nombre_periodo = nombre_nuevo
+            periodo.fecha_apertura = make_aware(fecha_apertura)
+            periodo.fecha_cierre = make_aware(fecha_cierre)
+            periodo.save()
+            return render(request, "settings.html", {"periodos": Periodo.objects.all(), "msg": "Información actualizada"})
+        nombre_periodo = request.POST.get("nuevo_nombre_periodo").strip()
+        fecha_apertura = datetime.strptime(request.POST.get("nuevo_fecha_apertura"), "%Y-%m-%dT%H:%M")
+        fecha_cierre = datetime.strptime(request.POST.get("nuevo_fecha_cierre"), "%Y-%m-%dT%H:%M")
+        if not nombre_periodo:
+            raise ValueError("El nombre del nuevo periodo no puede estar vacío.")
+        if fecha_apertura >= fecha_cierre:
+            raise ValueError("La fecha de apertura debe ser anterior a la de cierre.")
+        Periodo.objects.create(
+            nombre_periodo=nombre_periodo,
+            fecha_apertura=make_aware(fecha_apertura),
+            fecha_cierre=make_aware(fecha_cierre),
+        )
+        return render(request, "settings.html", {"periodos": Periodo.objects.all(), "msg": "Periodo Agregado"})
+    except ValueError as e:
+        return render(request, "settings.html", {"periodos": Periodo.objects.all(), "error": str(e)})
+
 #ELIMINAR REGISTRO DEL PROFESOR Y SUS TUTORÍAS -------------  ----------------------------------
 def eliminar_profesor(request,profesor_id):
     try:

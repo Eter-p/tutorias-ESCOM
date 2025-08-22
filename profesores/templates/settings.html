@@ -1,0 +1,54 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+<h1 class="display-4 text-center">Configuraciones</h1>
+{% if user.is_superuser %}
+<p><a href="/administrador" class="btn btn-outline-primary"> Regresar </a></p>
+    <h5 class="text-success">{{ msg }}</h5>
+    <h5 class="text-danger">{{ error }}</h5>
+    <div class="card px-3">
+        <h6 class="display-6">Modificar periodo existente</h6>
+        <table class="table">
+            <tr class="table-primary">
+                <th>Nombre</th>
+                <th>Fecha de Apertura</th>
+                <th>Fecha de Cierre</th>
+                <th>Actualizar</th>
+            </tr>
+            {% for periodo in periodos %}
+            <tr>
+                <form method="POST" action="/administrador/configuraciones">
+                    {% csrf_token %}
+                    <input type="hidden" name="periodo_id" value="{{ periodo.id }}">
+                    <td><input class="form-control" style="background-color: lightgray;" type="text" name="nombre_periodo" value="{{ periodo.nombre_periodo }}"></td>
+                    <td><input class="form-control" style="background-color: lightgray;" type="datetime-local" name="fecha_apertura" value="{{ periodo.fecha_apertura|date:'Y-m-d\TH:i' }}"></td>
+                    <td><input class="form-control" style="background-color: lightgray;"  type="datetime-local" name="fecha_cierre" value="{{ periodo.fecha_cierre|date:'Y-m-d\TH:i' }}"></td>
+                    <td><button class="btn btn-success" type="submit">Guardar</button></td>
+                </form>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <div class="card px-3">
+    
+        <h6 class="display-6">Agregar Nuevo Periodo</h6>
+        <form style="padding-right: 60%;" method="POST" action="/administrador/configuraciones">
+            {% csrf_token %}
+            <label class="form-label">Nombre del Periodo:</label>
+            <input class="form-control" style="background-color: lightgray;" type="text" name="nuevo_nombre_periodo" required>
+            
+            <label class="form-label">Fecha de Apertura:</label>
+            <input class="form-control" style="background-color: lightgray;" type="datetime-local" name="nuevo_fecha_apertura" required>
+            
+            <label class="form-label">Fecha de Cierre:</label>
+            <input class="form-control" style="background-color: lightgray;" type="datetime-local" name="nuevo_fecha_cierre" required>
+            
+            <button class="btn btn-success my-3" class="form-control" type="submit">Agregar</button>
+        </form>
+    </div>
+
+{% else %}
+    <p>Inicie Sesión como administrador</p>
+    <a href="/login" class="btn btn-primary">Iniciar Sesión</a>
+{% endif %}
+{% endblock %}

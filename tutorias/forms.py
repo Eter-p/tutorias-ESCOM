@@ -41,7 +41,8 @@ class FormTutoriaGrupal(forms.ModelForm):
             "carrera",
             "no_hombres_grupal",
             "no_mujeres_grupal",
-            "lista_alumnos_grupal"
+            "lista_alumnos_grupal",
+            "tutoria_asignada"
         ]
         labels = {
             "tutoria": "Tutoria - ID",
@@ -50,7 +51,8 @@ class FormTutoriaGrupal(forms.ModelForm):
             "carrera": "Carrera",
             "no_hombres_grupal": "Número de hombres",
             "no_mujeres_grupal": "Número de mujeres",
-            "lista_alumnos_grupal": "Lista de alumnos"
+            "lista_alumnos_grupal": "Lista de alumnos",
+            "tutoria_asignada": "Tutoría asignada"
         }
 
 class FormTutoriaPares(forms.ModelForm):

@@ -3,7 +3,7 @@ from django.utils.timezone import now
 from profesores.models import Profesor
 
 class Periodo(models.Model):
-    nombre_periodo = models.CharField(max_length=100,null=True,blank=True,default="202_-_")
+    nombre_periodo = models.CharField(unique=True,max_length=100,null=True,blank=True,default="202_-_")
     fecha_apertura = models.DateTimeField(null=True,blank=True,default=now)
     fecha_cierre = models.DateTimeField(null=True,blank=True,default=now)
     
@@ -35,7 +35,8 @@ class TutoriaGrupal(models.Model):
     no_hombres_grupal = models.SmallIntegerField()
     no_mujeres_grupal = models.SmallIntegerField()
     lista_alumnos_grupal = models.CharField(max_length=100)
-
+    tutoria_asignada = models.BooleanField(default=False)
+    
     def __str__(self):
         return f"{self.tutoria}"
     class Meta:

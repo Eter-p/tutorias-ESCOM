@@ -20,7 +20,7 @@ class TutoriasAdmin(admin.ModelAdmin):
 
 class TutoriaGrupalAdmin(admin.ModelAdmin):
     form = FormTutoriaGrupal
-    list_display = ("tutoria","tutoria__profesor","grupo","unidad_aprendizaje","carrera","no_hombres_grupal","no_mujeres_grupal","lista_alumnos_grupal")
+    list_display = ("tutoria","tutoria__profesor","grupo","unidad_aprendizaje","carrera","no_hombres_grupal","no_mujeres_grupal","lista_alumnos_grupal","tutoria_asignada")
     search_fields = ("tutoria__profesor__nombre","grupo","unidad_aprendizaje")
     list_filter = ("carrera",)
 

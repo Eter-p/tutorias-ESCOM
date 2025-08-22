@@ -12,10 +12,14 @@
 		<div class="col card card-body text-center align-items-center" >
 			<p><h1 class="display-4">Registro de Tutorías</h1></p>
 			<div class="container py-3">
+				<div class="row">
+					<h5 class=" text-start my-3">Fecha de cierre de registro: {{ periodo.fecha_cierre }} </h5>
+				</div>
 				<div class="row pb-4" >
 					<div class="col border border-dark rounded-3 p-0 mx-2">
 						<h5 class="pb-3 bg-primary text-light border rounded-2 p-3">Grupal</h5>
-						<a class="list-group-item btn btn-success border border-dark rounded-3 mx-3 my-4 {% if total.grupal > 2 %} d-none {% endif %}" href="/registro/tutoria/grupal">
+						<p>Restantes: {{ restante.grupal }}</p>
+						<a class="list-group-item btn btn-success border border-dark rounded-3 mx-3 my-4 {% if restante.grupal < 1 %} d-none {% endif %}  {% if fecha > periodo.fecha_cierre %} d-none {% endif %}" href="/registro/tutoria/grupal">
 							<h5 class="mb-3">Registar</h5>
 						</a>
 						<a class="list-group-item btn btn-success border border-dark rounded-3 mx-3 my-4" href="/tutorias/grupales">
@@ -24,7 +28,8 @@
 					</div>
 					<div class="col border border-dark rounded-3 p-0 mx-2">
 						<h5 class="pb-3 bg-primary text-light border rounded-2 p-3">Individual</h5>
-						<a class="list-group-item btn btn-success border border-dark rounded-3 mx-3 my-4 {% if total.individual > 0 %} d-none {% endif %}" href="/registro/tutoria/individual">
+						<p>Restantes: {{ restante.individual }}</p>
+						<a class="list-group-item btn btn-success border border-dark rounded-3 mx-3 my-4 {% if restante.individual < 1 %} d-none {% endif %} {% if fecha > periodo.fecha_cierre %} d-none {% endif %}" href="/registro/tutoria/individual">
 							<h5 class="mb-3">Registar</h5>
 						</a>
 						<a class="list-group-item btn btn-success border border-dark rounded-3 mx-3 my-4" href="/tutorias/individuales">
@@ -33,7 +38,8 @@
 					</div>
 					<div class="col border border-dark rounded-3 p-0 mx-2">
 						<h5 class="pb-3 bg-primary text-light border rounded-2 p-3">Entre Pares</h5>
-						<a class="list-group-item btn btn-success border border-dark rounded-3 mx-3 my-4 {% if total.pares > 1 %} d-none {% endif %}" href="/registro/tutoria/pares">
+						<p>Restantes: {{ restante.pares }}</p>
+						<a class="list-group-item btn btn-success border border-dark rounded-3 mx-3 my-4 {% if restante.pares < 1 %} d-none {% endif %} {% if fecha > periodo.fecha_cierre %} d-none {% endif %}" href="/registro/tutoria/pares">
 							<h5 class="mb-3">Registar</h5>
 						</a>
 						<a class="list-group-item btn btn-success border border-dark rounded-3 mx-3 my-4" href="/tutorias/pares">
@@ -44,7 +50,8 @@
 				<div class="row" >
 					<div class="col border border-dark rounded-3 p-0 mx-2">
 						<h5 class="pb-3 bg-primary text-light border rounded-2 p-3">De Regularización</h5>
-						<a class="list-group-item btn btn-success border border-dark rounded-3 mx-3 my-4 {% if total.regularizacion > 0 %} d-none {% endif %}" href="/registro/tutoria/regularizacion">
+						<p>Restantes: {{ restante.regularizacion }}</p>
+						<a class="list-group-item btn btn-success border border-dark rounded-3 mx-3 my-4 {% if restante.regularizacion < 1 %} d-none {% endif %} {% if fecha > periodo.fecha_cierre %} d-none {% endif %}" href="/registro/tutoria/regularizacion">
 							<h5 class="mb-3">Registar</h5>
 						</a>
 						<a class="list-group-item btn btn-success border border-dark rounded-3 mx-3 my-4" href="/tutorias/regularizacion">
@@ -53,7 +60,8 @@
 					</div>
 					<div class="col border border-dark rounded-3 p-0 mx-2">
 						<h5 class="pb-3 bg-primary text-light border rounded-2 p-3">De Recuperación</h5>
-						<a class="list-group-item btn btn-success border border-dark rounded-3 mx-3 my-4 {% if total.recuperacion > 0 %} d-none {% endif %}" href="/registro/tutoria/recuperacion">
+						<p>Restantes: {{ restante.recuperacion }}</p>
+						<a class="list-group-item btn btn-success border border-dark rounded-3 mx-3 my-4 {% if restante.recuperacion < 1 %} d-none {% endif %} {% if fecha > periodo.fecha_cierre %} d-none {% endif %}" href="/registro/tutoria/recuperacion">
 							<h5 class="mb-3">Registar</h5>
 						</a>
 						<a class="list-group-item btn btn-success border border-dark rounded-3 mx-3 my-4" href="/tutorias/recuperacion">
@@ -62,7 +70,8 @@
 					</div>
 					<div class="col border border-dark rounded-3 p-0 mx-2">
 						<h5 class="pb-3 bg-primary text-light border rounded-2 p-3">De Movilidad</h5>
-						<a class="list-group-item btn btn-success border border-dark rounded-3 mx-3 my-4 {% if total.movilidad > 0 %} d-none {% endif %}" href="/registro/tutoria/movilidad">
+						<p>Restantes: {{ restante.movilidad }}</p>
+						<a class="list-group-item btn btn-success border border-dark rounded-3 mx-3 my-4 {% if restante.movilidad < 1 %} d-none {% endif %} {% if fecha > periodo.fecha_cierre %} d-none {% endif %}" href="/registro/tutoria/movilidad">
 							<h5 class="mb-3">Registar</h5>
 						</a>
 						<a class="list-group-item btn btn-success border border-dark rounded-3 mx-3 my-4" href="/tutorias/movilidad">

@@ -63,19 +63,16 @@ def asignar_grupo(base_datos,lista_profesores,lista_grupos,intento,tabla_asignad
     indice = buscar_profesor(lista_profesores[0],base_datos)
     profesor_grupo = []
     if intento<=3:
-#        print(f"intenta: {lista_profesores[0]} --> {base_datos[indice][intento]}")
         if base_datos[indice][intento] in lista_grupos:
             profesor_grupo.append(lista_profesores.pop(0))
             lista_grupos.remove(base_datos[indice][intento])
             profesor_grupo.append(base_datos[indice][intento])
             tabla_asignada.append(profesor_grupo)
-#            print(f"\tinserta{profesor_grupo}")
             intento = 1
             return asignar_grupo(base_datos,lista_profesores,lista_grupos,intento,tabla_asignada)
         else:
             return asignar_grupo(base_datos,lista_profesores,lista_grupos,intento+1,tabla_asignada)
     if intento>3:
-#        print("mas de 3 intentos")
         intento = next((i for i, x in enumerate(base_datos[indice][1:], start=1) if x is not None), None)
         indice_asignada = buscar_grupo(base_datos[indice][intento],tabla_asignada,1)
         lista_profesores.insert(1,tabla_asignada[indice_asignada][0])
@@ -84,9 +81,6 @@ def asignar_grupo(base_datos,lista_profesores,lista_grupos,intento,tabla_asignad
         base_datos[n_indice][base_datos[n_indice].index(tabla_asignada[indice_asignada][1])] = None
         tabla_asignada.remove(tabla_asignada[indice_asignada])
         return asignar_grupo(base_datos,lista_profesores,lista_grupos,intento,tabla_asignada)
-
-
-
 
 # ENVIA CORREOS ELECTRONICOS
 def enviar_correo(id,tipo,correo):

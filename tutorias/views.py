@@ -276,7 +276,7 @@ def listar_tutorias_user(request,tipo):
         tipo_tutoria = TutoriaRegularizacion
         template = "viewsTutorias/regularizacion.html"
 
-    lista_tutorias = tipo_tutoria.objects.filter(tutoria__profesor = request.user)
+    lista_tutorias = tipo_tutoria.objects.filter(tutoria__profesor = request.user, tutoria__periodo=periodo_actual())
     boletas_alumnos = {}
     if tipo_tutoria == TutoriaMovilidad:
         for instancia in lista_tutorias:
