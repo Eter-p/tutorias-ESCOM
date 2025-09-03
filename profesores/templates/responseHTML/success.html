@@ -4,7 +4,13 @@
 <div class="row">
     {% if success == "usuario creado" %}
         <div class="col-md-8 offset-md-3 my-3">
-            <h2 class="display-5">Usuario Regitrado con exito</h2>
+            <h2 class="display-5">Usuario Registrado</h2>
+            <h4><p> Favor de revisar su correo institucional completar su registro (incluida la carpeta de correo no deseado) </p></h4>
+            <a href="/login" class="btn btn-primary">Ir a inicia sesión</a>
+        </div>
+    {% elif success == "usuario activado" %}
+        <div class="col-md-8 offset-md-3 my-3">
+            <h2 class="display-5">Usuario Activado con exito.</h2>
             <a href="/login" class="btn btn-primary">Ir a inicia sesión</a>
         </div>
     {% elif success == "tutoria registrada" %}

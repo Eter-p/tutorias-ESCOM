@@ -1,13 +1,16 @@
 from datetime import datetime
 from django.contrib.auth import login,logout,authenticate
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.tokens import default_token_generator
 from django.shortcuts import render,redirect,get_object_or_404
 from django.http import JsonResponse
+from django.utils.http import urlsafe_base64_encode,urlsafe_base64_decode
+from django.utils.encoding import force_bytes
 from django.utils.timezone import now,make_aware
 from pprint import pprint
 
 from .models import Profesor
-from .utils import profesores_ha_registrado,asignar_grupos
+from .utils import profesores_ha_registrado,asignar_grupos,enviar_correo
 from tutorias.utils import periodo_actual
 from tutorias.models import Periodo,TutoriaGrupal,TutoriaPares,TutoriaIndividual,TutoriaMovilidad,TutoriaRegularizacion,TutoriaRecuperacion
 from tutorias.forms import FormPerido
@@ -329,9 +332,16 @@ def signup(request):
             email = request.POST["correo_institucional"],
             correo_alterno = request.POST["correo_alterno"],
             username = request.POST["usuario"],
+            is_active=False
         )
         profesor_creado.set_password(request.POST["password1"])
         profesor_creado.save()
+        print(profesor_creado.pk)
+        uid = urlsafe_base64_encode(force_bytes(profesor_creado.pk))
+        print(uid)
+        token = default_token_generator.make_token(profesor_creado)
+        print(token)
+        enviar_correo(uid,token,profesor_creado)
         return render(request,"responseHTML/success.html",{"success": "usuario creado"})
     except ValueError as error:
         return render(request,"singup.html", {"error": str(error)})
@@ -367,3 +377,23 @@ def signin(request):
 def signout(request):
     logout(request)
     return redirect("inicio")
+
+def activate_account(request, uidb64, token):
+    try:
+        print(f" ai {uidb64} - {token}")
+        
+        uid = urlsafe_base64_decode(uidb64).decode()
+        print(uid)
+        user = Profesor.objects.get(pk=uid)
+        print(f"{uid} - {user}")
+    except (TypeError, ValueError, OverflowError, Profesor.DoesNotExist):
+        user = None
+
+    if user is not None and default_token_generator.check_token(user, token):
+        user.is_active = True
+        user.save()
+        return render(request,"responseHTML/success.html",{"success": "usuario activado"})
+    else:
+        return render(request, 'responseHTML/failure.html', {
+            'reason': 'El enlace de activación no es válido o ha expirado.'
+        })

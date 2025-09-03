@@ -21,7 +21,7 @@ class CustomUserAdmin(UserAdmin):
         }),
     )
 
-    list_display = ('username','nombre', 'email', 'correo_alterno', 'is_staff')
+    list_display = ('username','nombre', 'email', 'correo_alterno', 'is_active', 'is_staff')
     search_fields = ('username', 'email')
 
 admin.site.register(Profesor, CustomUserAdmin)

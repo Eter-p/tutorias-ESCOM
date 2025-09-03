@@ -83,14 +83,11 @@ def asignar_grupo(base_datos,lista_profesores,lista_grupos,intento,tabla_asignad
         return asignar_grupo(base_datos,lista_profesores,lista_grupos,intento,tabla_asignada)
 
 # ENVIA CORREOS ELECTRONICOS
-def enviar_correo(id,tipo,correo):
-	asunto = tipo
-	mensaje = "Guarda este numero en caso de necesitarlo: "+str(id)
-	destinatario = correo
-	send_mail(
-		asunto,
-		mensaje,
-		'hernandez.hernandez.fabian@gmail.com',  # Desde este correo
-		[destinatario],  # A este correo
-		fail_silently=False,
-	)
+def enviar_correo(uid,token,user):
+    activation_link = f"http://localhost:8000/activate/{uid}/{token}/"
+    send_mail(
+        subject="Activa tu cuenta",
+        message=f"Se hizo un registro del usuario {user.username} en el Sistema de Tutorías de la ESCOM. Activa tu cuenta usando este enlace: {activation_link}. Si usted no reconoce esta actividad, ignore este correo.",
+        from_email="smpmo.p@gmail.com",
+        recipient_list=[user.email],
+    )

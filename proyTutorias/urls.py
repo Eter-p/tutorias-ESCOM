@@ -21,6 +21,7 @@ from tutorias import views as vtuto
 
 urlpatterns = [
     path('',vprof.inicio,name="inicio"),
+    path('activate/<uidb64>/<token>/', vprof.activate_account, name='activate'),
     path('admin/', admin.site.urls),
     path('administrador/',vprof.inicio_administrador,name="administrador"),
     path('administrador/configuraciones',vprof.configuracion,name="configuraciones"),
@@ -28,8 +29,8 @@ urlpatterns = [
     path('administrador/estadisticas/get_char/<str:periodo>',vprof.get_char,name="get_char"),
     path('administrador/tutorias/<str:tipo>/<str:periodo>/',vtuto.listar_tutorias_admin,name="listar_tutorias_admin"),
     path('administrador/tutorias/grupales/<str:periodo>/reporte',vprof.reporte,name="reporte"),
-    path('tutorias/<str:tipo>/',vtuto.listar_tutorias_user,name="listar_tutorias_user"),
     path('administrador/profesores/<str:periodo>/',vprof.listar_profesores,name="profesores"),
+    path('tutorias/<str:tipo>/',vtuto.listar_tutorias_user,name="listar_tutorias_user"),
     path('registro/tutoria/<str:tipo>/',vtuto.registrar_tutoria,name="registrar_tutoria"),
     path('login/',vprof.signin,name="login"),
     path('logout/',vprof.signout,name="logout"),
