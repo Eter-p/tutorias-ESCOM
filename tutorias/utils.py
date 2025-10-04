@@ -24,14 +24,12 @@ def falta_datos(tabla_datos):
 
 def listar_alumnos(alumnos_boletas):
     alumnos_boletas = alumnos_boletas.split(";")
-    print(alumnos_boletas)
     lista_alumnos = []
     alumnos = []
     boletas = []
     for alumno_boleta in alumnos_boletas:
         if alumno_boleta:
             a_b = alumno_boleta.split(",")
-            print(a_b)
             alumnos.append(a_b[0].strip())
             if len(a_b) < 2:
                 boletas.append("")

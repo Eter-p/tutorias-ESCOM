@@ -5,7 +5,6 @@ from django.shortcuts import render
 from profesores.utils import profesores_ha_registrado
 from .models import Tutorias,TutoriaGrupal,TutoriaPares,TutoriaIndividual,TutoriaMovilidad,TutoriaRegularizacion,TutoriaRecuperacion
 from .utils import falta_datos, listar_alumnos,periodo_actual
-from pprint import pprint
 
 #REGISTRO DE LAS TUTORÍAS ------------------------------------------------------------------
 @login_required
@@ -285,7 +284,6 @@ def listar_tutorias_user(request,tipo):
                 boleta,alumno = boleta_alumno.split(",")
                 boletas_alumnos[boleta] = alumno
                 
-    pprint(boletas_alumnos)
     return render(request,template,{"lista_tutorias": lista_tutorias, "alumnos": boletas_alumnos})
 
 @login_required

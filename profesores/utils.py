@@ -1,9 +1,7 @@
 from django.core.mail import send_mail
 
 from .models import Profesor
-from tutorias.utils import periodo_actual
 from tutorias.models import TutoriaGrupal,TutoriaIndividual,TutoriaMovilidad,TutoriaPares,TutoriaRecuperacion,TutoriaRegularizacion
-from pprint import pprint
 # FLITAR PROFESOR
 def profesores_ha_registrado(periodo_selecionado):
     """ Se filtarán y descartaran los profesores que no hayan hecho ningun registro en el perido actual"""

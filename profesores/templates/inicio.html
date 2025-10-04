@@ -12,11 +12,19 @@
 		<div class="col card card-body text-center align-items-center" >
 			<p><h1 class="display-4">Registro de Tutorías</h1></p>
 			<div class="container py-3">
-				<div class="row">
-					<h5 class=" text-start my-3"><b>Instrucciones:</b> Registre solo las tutorías que vaya a impartir</h5>
+				<div class="row card card-body">
 					<h5 class=" text-start my-3">Fecha de cierre de registro: {{ periodo.fecha_cierre }} </h5>
+					<h5 class=" text-start my-3"><b>Instrucciones:</b> Registre solo las tutorías que vaya a impartir</h5>
+					<ul class="list-group list-group-flush text-start">
+						<li class="list-group-item">Puede registrar hasta tres grupos</li>
+						<li class="list-group-item">Registre una única lista de tutorías individuales</li>
+						<li class="list-group-item">Puede registrar hasta dos alumnos asesores</li>
+						<li class="list-group-item">Registe un grupo de regularización y uno de recuperación</li>
+						<li class="list-group-item">Registre una única lista de movilidad</li>
+					</ul>
+					<h5 class=" text-start my-3">En caso de requerir algún registro adicional, contacte con el personal a cargo</h5>
 				</div>
-				<div class="row pb-4" >
+				<div class="row py-4" >
 					<div class="col border border-dark rounded-3 p-0 mx-2">
 						<h5 class="pb-3 bg-primary text-light border rounded-2 p-3">Grupal</h5>
 						<p>Restantes: {{ restante.grupal }}</p>
@@ -89,55 +97,62 @@
 				Este sitio ha sido diseñado para simplificar y agilizar los procesos de registro.
 			</p>
 		</div>
-		<div class="col-4 card card-body m-3">
-			<h2 class="text-center text-primary">INICIAR SESIÓN</h2>
-			<form action="/login/" method="post" class="card border border-0">
-				{% csrf_token %}
-				<div class="form-group mb-3">
-					<label class="form-label p-2" for="username">Usuario:</label>
-					<input type="text" class="form-control text-dark" style="background-color: lightgray;" name="username" placeholder="Nombre de usuario">
+		<div class="row">
+			<div class="col-6 m-3">
+				<div class="row card card-body mb-3">
+					<p class="fst-italic">Inicie sesión con su nombre de usuario o regístrese con un nombre y contraseña que recuerde.</p>
 				</div>
-				<div class="form-group mb-3">
-					<label class="form-label p-2" for="password">Contraseña:</label>
-					<input type="password" name="password" id="password" class="form-control text-dark" style="background-color: lightgray;" placeholder="Contraseña">
+				<div class="row card card-body">
+					<h2 class="text-center text-primary">INICIAR SESIÓN</h2>
+					<form action="/login/" method="post" class="card border border-0">
+						{% csrf_token %}
+						<div class="form-group mb-3">
+							<label class="form-label p-2" for="username">Usuario:</label>
+							<input type="text" class="form-control text-dark" style="background-color: lightgray;" name="username" placeholder="Nombre de usuario">
+						</div>
+						<div class="form-group mb-3">
+							<label class="form-label p-2" for="password">Contraseña:</label>
+							<input type="password" name="password" id="password" class="form-control text-dark" style="background-color: lightgray;" placeholder="Contraseña">
+						</div>
+						<button class="btn btn-primary">Iniciar Sesion</button>
+					</form>
+					<div class="">
+						<p><a href="/password-reset/">Olvido su contraseña</a></p>
+					</div>
 				</div>
-				<button class="btn btn-primary">Iniciar Sesion</button>
-			</form>
-			<!-- <div>
-				<img src="https://i.pinimg.com/originals/fc/14/68/fc1468bea16970cf0f2482d107b3c621.gif"> 
-			</div> -->
-		</div>
-		<div class="col-4 card card-body m-3">
-			<h2 class="text-center text-success">REGISTRAR USUARIO</h2>
-			<form action="/signup/" method="post" class="card border border-0">
-				{% csrf_token %}
-				<div class="form-group">
-					<label class="form-label p-2" for="nombre">Nombre del profesor tutor o profesora tutora <b class="text-danger">*</b></label>
-					<input type="text" class="form-control text-dark" style="background-color: lightgray;" id="nombre" name="nombre" placeholder="Nombre completo" required>
-				</div>
-				
-				<div class="form-group">
-					<label  class="form-label p-2" for="correo_institucional">Correo electrónico Institucional <b class="text-danger">*</b></label>
-					<input type="email" class="form-control text-dark" style="background-color: lightgray;" id="correo_institucional" name="correo_institucional" required>
-				</div>
-				<div class="form-group">
-					<label  class="form-label p-2" for="correo_alterno">Correo electrónico Alterno</label>
-					<input type="email" class="form-control text-dark" style="background-color: lightgray;" id="correo_alterno" name="correo_alterno">
-				</div>
-				<div class="form-group">
-					<label class="form-label p-2" for="usuario">Nombre de usuario <b class="text-danger">*</b></label>
-					<input type="text" class="form-control text-dark" style="background-color: lightgray;" id="usuario" name="usuario" placeholder="Solo letras, números, @, +, - y _" required>
-				</div>
-				<div class="form-group">
-					<label class="form-label p-2" for="password1">Contraseña <b class="text-danger">*</b></label>
-					<input type="password" class="form-control text-dark" style="background-color: lightgray;" id="password1" name="password1" required>
-				</div>
-				<div class="form-group">
-					<label class="form-label p-2" for="password2">Repetir contraseña <b class="text-danger">*</b></label>
-					<input type="password" class="form-control text-dark" style="background-color: lightgray;" id="password2" name="password2" required>
-				</div>
-				<button class="btn btn-success my-3">Registar</button>
-			</form>
+			</div>
+			<div class="col-4 card card-body my-3">
+				<h2 class="text-center text-success">REGISTRAR USUARIO</h2>
+				<form action="/signup/" method="post" class="card border border-0">
+					{% csrf_token %}
+					<div class="form-group">
+						<label class="form-label p-2" for="nombre">Nombre del profesor tutor o profesora tutora <b class="text-danger">*</b></label>
+						<input type="text" class="form-control text-dark" style="background-color: lightgray;" id="nombre" name="nombre" placeholder="Nombre completo" required>
+					</div>
+					
+					<div class="form-group">
+						<label  class="form-label p-2" for="correo_institucional">Correo electrónico Institucional <b class="text-danger">*</b></label>
+						<input type="email" class="form-control text-dark" style="background-color: lightgray;" id="correo_institucional" name="correo_institucional" required>
+					</div>
+					<div class="form-group">
+						<label  class="form-label p-2" for="correo_alterno">Correo electrónico Alterno</label>
+						<input type="email" class="form-control text-dark" style="background-color: lightgray;" id="correo_alterno" name="correo_alterno">
+					</div>
+					<div class="form-group">
+						<label class="form-label p-2" for="usuario">Nombre de usuario <b class="text-danger">*</b></label>
+						<input type="text" class="form-control text-dark" style="background-color: lightgray;" id="usuario" name="usuario" placeholder="Solo letras, números, @, +, - y _" required>
+					</div>
+					<div class="form-group">
+						<label class="form-label p-2" for="password1">Contraseña <b class="text-danger">*</b></label>
+						<input type="password" class="form-control text-dark" style="background-color: lightgray;" id="password1" name="password1" required>
+					</div>
+					<div class="form-group">
+						<label class="form-label p-2" for="password2">Repetir contraseña <b class="text-danger">*</b></label>
+						<input type="password" class="form-control text-dark" style="background-color: lightgray;" id="password2" name="password2" required>
+					</div>
+					<button class="btn btn-success my-3">Registar</button>
+				</form>
+			</div>
 		</div>
 	{% endif %}
 </div>

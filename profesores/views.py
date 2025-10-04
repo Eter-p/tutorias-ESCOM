@@ -7,16 +7,12 @@ from django.http import JsonResponse
 from django.utils.http import urlsafe_base64_encode,urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.utils.timezone import now,make_aware
-from pprint import pprint
 
 from .models import Profesor
 from .utils import profesores_ha_registrado,asignar_grupos,enviar_correo
 from tutorias.utils import periodo_actual
 from tutorias.models import Periodo,TutoriaGrupal,TutoriaPares,TutoriaIndividual,TutoriaMovilidad,TutoriaRegularizacion,TutoriaRecuperacion
 from tutorias.forms import FormPerido
-
-def test(request):
-    return render(request,"responseHTML/success.html",{"saludo":"hola  mundo"})
 
 def inicio(request):
     """ En la pantalla de inicio se hace una comprobacion de cuantas y cuales tutorías ha registrado el usuario """
@@ -29,8 +25,6 @@ def inicio(request):
         periodo = periodo_actual()
         if periodo == None:
             periodo = Periodo.objects.latest("fecha_cierre")
-        print(periodo)
-
         for tipo_tutoria,nombre_turoria,maximo in zip(tipos_tutorias,nombre_tutorias,max_tutorias):
             conteo_tutorias[nombre_turoria]= maximo-len(tipo_tutoria.objects.filter(tutoria__profesor=request.user,tutoria__periodo=periodo))
         return render(request,"inicio.html",{"restante":conteo_tutorias,"fecha":now(),"periodo":periodo})
@@ -271,6 +265,7 @@ def reporte(request,periodo):
         "mostrar":True,
     })
 
+@login_required
 def configuracion(request):
     if request.method == "GET":
         periodos = Periodo.objects.all()
@@ -308,15 +303,6 @@ def configuracion(request):
     except ValueError as e:
         return render(request, "settings.html", {"periodos": Periodo.objects.all(), "error": str(e)})
 
-#ELIMINAR REGISTRO DEL PROFESOR Y SUS TUTORÍAS -------------  ----------------------------------
-def eliminar_profesor(request,profesor_id):
-    try:
-        profesor = get_object_or_404(Profesor, id=profesor_id)
-        profesor.delete()
-    except:
-        return render(request,"responseHTML/failure.html")
-
-#REGISTAR USUARIO ------------------------------------------------------------------------------
 def signup(request):
     if request.method == "GET":
         return render(request, "singup.html")
@@ -336,11 +322,8 @@ def signup(request):
         )
         profesor_creado.set_password(request.POST["password1"])
         profesor_creado.save()
-        print(profesor_creado.pk)
         uid = urlsafe_base64_encode(force_bytes(profesor_creado.pk))
-        print(uid)
         token = default_token_generator.make_token(profesor_creado)
-        print(token)
         enviar_correo(uid,token,profesor_creado)
         return render(request,"responseHTML/success.html",{"success": "usuario creado"})
     except ValueError as error:
@@ -348,7 +331,6 @@ def signup(request):
     except Exception as no_se:
         return render(request,"singup.html", {"error": f'Error no contemplado, intente mas tarde: {no_se}'})
 
-#INICIAR SESIÓN --------------------------------------------------------------------------------
 def signin(request):
     if request.method == "GET":
         return render(request, "login.html")
@@ -372,7 +354,6 @@ def signin(request):
     except Exception as no_se:
         return render(request,"singup.html", {"error": f'Error no contemplado, intente mas tarde: {no_se}'})
 
-#CERRAR SESIÓN ---------------------------------------------------------------------------------
 @login_required
 def signout(request):
     logout(request)
@@ -380,12 +361,8 @@ def signout(request):
 
 def activate_account(request, uidb64, token):
     try:
-        print(f" ai {uidb64} - {token}")
-        
         uid = urlsafe_base64_decode(uidb64).decode()
-        print(uid)
         user = Profesor.objects.get(pk=uid)
-        print(f"{uid} - {user}")
     except (TypeError, ValueError, OverflowError, Profesor.DoesNotExist):
         user = None
 
