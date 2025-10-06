@@ -41,7 +41,11 @@
 						<ul class="list-group">
 							{% for tutoria in tutorias %}
 								<li class="list-group-item border border-black">
-									<p><strong>Grupo:</strong> {{ tutoria.grupo }}</p>
+									{% if tutoria.tutoria_asignada %}
+                                        <p><strong>Grupo:</strong> {{ tutoria.grupo }} <b class="bg-success text-light"> Asignado</b></p>
+                                    {% else %}
+                                        <p><strong>Grupo:</strong> {{ tutoria.grupo }}
+                                    {% endif %}
 									<p><strong>Materia:</strong> {{ tutoria.unidad_aprendizaje }}</p>
 									<p><strong>Carrera:</strong>
 										{% if tutoria.carrera  == "isc" %}

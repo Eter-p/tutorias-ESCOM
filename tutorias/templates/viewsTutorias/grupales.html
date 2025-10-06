@@ -43,8 +43,6 @@
                         <div class="col">
                             <p><b>Total de profesores: {{lista_profesores|length}}</b> </p>
                         </div>
-                        
-
                     </div>
                 </li>
                 {% for profesor, tutorias in lista_profesores.items %}
@@ -53,7 +51,11 @@
                         <ul>
                             {% for tutoria in tutorias %}
                                 <li>
-                                    <p><strong>Grupo:</strong> {{ tutoria.grupo }}</p>
+                                    {% if tutoria.tutoria_asignada %}
+                                        <p><strong>Grupo:</strong> {{ tutoria.grupo }} <b class="bg-success text-light"> Asignado</b></p>
+                                    {% else %}
+                                        <p><strong>Grupo:</strong> {{ tutoria.grupo }}
+                                    {% endif %}
                                     <p><strong>Materia:</strong> {{ tutoria.unidad_aprendizaje }}</p>
                                     <p><strong>Carrera:</strong>
                                         {% if tutoria.carrera  == "isc" %}
@@ -84,11 +86,19 @@
                     <h3 class="text-center"> Aun no hay tutorías registradas </h3>
                 {% endif %}
                 {% for tutoria in lista_tutorias  %}
-                    <li class="card shadow-sm mb-4">
-                        <strong class="card-header bg-primary text-white fw-bold">Grupo: {{ tutoria.grupo }}</strong> 
-                    <li class="list-group-item">
-                        <p><strong>Materia:</strong> {{ tutoria.unidad_aprendizaje }}</p>
-                        <p><strong>Carrera:</strong>
+                    <li class="card shadow-sm mb-3">
+                        <div class="row card-header mx-0 bg-primary text-white fw-bold">
+                            <div class="col">
+                                Grupo: {{ tutoria.grupo }}
+                            </div>
+                            {% if tutoria.tutoria_asignada %}
+                                <div class="col-2 bg-success text-end pe-4">
+                                    Asignado
+                                </div>
+                            {% endif %}
+                        </div>
+                        <p class="px-3"><strong>Materia:</strong> {{ tutoria.unidad_aprendizaje }}</p>
+                        <p class="px-3"><strong>Carrera:</strong>
                             {% if tutoria.carrera  == "isc" %}
                                 Ingeniería en Sistemas Computacionales
                             {% elif tutoria.carrera == "iia" %}
@@ -101,9 +111,9 @@
                                 {{ tutoria.carrera }}
                             {% endif %}
                         </p>
-                        <p><strong>Número de hombres:</strong> {{ tutoria.no_hombres_grupal }}</p>
-                        <p><strong>Número de mujeres:</strong> {{ tutoria.no_mujeres_grupal }}</p>
-                        <p><a class="btn btn-outline-primary w-10" target="_blank" href="{{ tutoria.lista_alumnos_grupal }}">Lista de Alumnos</a></p>
+                        <p class="px-3"><strong>Número de hombres:</strong> {{ tutoria.no_hombres_grupal }}</p>
+                        <p class="px-3"><strong>Número de mujeres:</strong> {{ tutoria.no_mujeres_grupal }}</p>
+                        <p class="px-3"><a class="btn btn-outline-primary w-10" target="_blank" href="{{ tutoria.lista_alumnos_grupal }}">Lista de Alumnos</a></p>
                     </li>
                 {% endfor %}
             </ul>

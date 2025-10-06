@@ -1,18 +1,16 @@
 from datetime import datetime
 from django.contrib.auth import login,logout,authenticate
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.tokens import default_token_generator
-from django.shortcuts import render,redirect,get_object_or_404
+from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from django.utils.http import urlsafe_base64_encode,urlsafe_base64_decode
-from django.utils.encoding import force_bytes
+from django.shortcuts import render,redirect,get_object_or_404
 from django.utils.timezone import now,make_aware
+from django.utils.http import urlsafe_base64_decode
 
 from .models import Profesor
-from .utils import profesores_ha_registrado,asignar_grupos,enviar_correo
+from .utils import profesores_ha_registrado,asignar_grupos,enviar_correo_activacion
 from tutorias.utils import periodo_actual
 from tutorias.models import Periodo,TutoriaGrupal,TutoriaPares,TutoriaIndividual,TutoriaMovilidad,TutoriaRegularizacion,TutoriaRecuperacion
-from tutorias.forms import FormPerido
 
 def inicio(request):
     """ En la pantalla de inicio se hace una comprobacion de cuantas y cuales tutorías ha registrado el usuario """
@@ -322,14 +320,12 @@ def signup(request):
         )
         profesor_creado.set_password(request.POST["password1"])
         profesor_creado.save()
-        uid = urlsafe_base64_encode(force_bytes(profesor_creado.pk))
-        token = default_token_generator.make_token(profesor_creado)
-        enviar_correo(uid,token,profesor_creado)
+        enviar_correo_activacion(profesor_creado)
         return render(request,"responseHTML/success.html",{"success": "usuario creado"})
     except ValueError as error:
         return render(request,"singup.html", {"error": str(error)})
     except Exception as no_se:
-        return render(request,"singup.html", {"error": f'Error no contemplado, intente mas tarde: {no_se}'})
+        return render(request,"singup.html", {"error": f'Error no contemplado, intente mas tarde.\nNOTA: Hay posibolidad de que su cuenta haya sido creada. Trate de iniciar sesión\nInformación sobre el error: {no_se}'})
 
 def signin(request):
     if request.method == "GET":
@@ -338,13 +334,13 @@ def signin(request):
         username=request.POST['username']
         password=request.POST['password']
         if not Profesor.objects.filter(username=username).exists():
-            raise ValueError("Usuario no registrado.")
+            raise ValueError("NRegistro")
         user = Profesor.objects.get(username=username)
         if not user.is_active:
-            raise ValueError("Tu cuenta está inactiva. Contacta al administrador.")
+            raise ValueError("CInactiva")
         auth = authenticate(request,username=username,password=password)
         if auth is None:
-            raise ValueError("Credenciales incorrectas. Intenta nuevamente")
+            raise ValueError("Incorrecto")
         login(request,auth)
         if user.is_superuser:
             return redirect("administrador")
@@ -352,13 +348,16 @@ def signin(request):
     except ValueError as error:
         return render(request, "login.html", { "error": str(error) })
     except Exception as no_se:
-        return render(request,"singup.html", {"error": f'Error no contemplado, intente mas tarde: {no_se}'})
+        return render(request,"singup.html", {"error": f'Error no contemplado, intente mas tarde.\nInformación del error:{no_se}'})
 
 @login_required
 def signout(request):
     logout(request)
     return redirect("inicio")
 
+def reenviar_activacion(request):
+    enviar_correo_activacion(Profesor.objects.get(email=request.POST["correo"]))
+    return render(request,"responseHTML/success.html",{"success":"correo reenviado"})
 def activate_account(request, uidb64, token):
     try:
         uid = urlsafe_base64_decode(uidb64).decode()
@@ -372,5 +371,5 @@ def activate_account(request, uidb64, token):
         return render(request,"responseHTML/success.html",{"success": "usuario activado"})
     else:
         return render(request, 'responseHTML/failure.html', {
-            'reason': 'El enlace de activación no es válido o ha expirado.'
+            'error': 'El enlace de activación no es válido o ha expirado.'
         })

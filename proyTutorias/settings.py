@@ -30,9 +30,9 @@ EMAIL_HOST_PASSWORD = 'hrza fsgp ceiy pswh'
 SECRET_KEY = 'django-insecure-@ds$5k^x_e7b!plaa2%v4u^vjj-#zh-dq(_1za_5z!_n0xw_vm'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ["localhost","127.0.0.1","148.204.57.53","192.168.100.24"]
+ALLOWED_HOSTS = ["localhost","127.0.0.1","148.204.57.53"]
 
 # Application definition
 

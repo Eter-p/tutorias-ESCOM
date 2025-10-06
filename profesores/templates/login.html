@@ -4,7 +4,25 @@
 <div class="container my-3">
     <div class="mx-auto p-1" style="width: 500px;">
         <h2 class="text-center text-primary">INICIAR SESIÓN</h2>
-        <p class="text-danger">{{error}}</p>
+            {% if error == "NRegistro" %}
+            <div class="card card-body">
+                <p class="text-danger">Usuario no registrado</p>
+                <a class="btn btn-outline-primary" href=" {% url 'signup' %}">Ir a registar usuario</a>
+            </div>
+            {% elif error == "CInactiva" %}
+            <div class="card card-body">
+                <p class="text-danger">Tu cuenta está inactiva. Revisa tu correo institucional.</p>
+                <form method="post" class="input-group" action="/reenviar/activacion/">
+                    {% csrf_token %}
+                    <input type="text" class="form-control text-dark" style="background-color: lightgray;" name="correo" placeholder="Correo Institucional">
+                    <button type="submit" class="btn btn-outline-primary">Reenviar correo</button>
+                </form>
+            </div>
+            {% elif error == "Incorrecto" %}
+            <div class="card card-body">
+                <p class="text-danger">Credenciales incorrectas. Intenta nuevamente</p>
+            </div>
+            {%endif%}
         <form action="/login/" method="post" class="card border border-0">
             {% csrf_token %}
             <div class="form-group mb-3">

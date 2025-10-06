@@ -1,7 +1,11 @@
+from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
 
 from .models import Profesor
 from tutorias.models import TutoriaGrupal,TutoriaIndividual,TutoriaMovilidad,TutoriaPares,TutoriaRecuperacion,TutoriaRegularizacion
+
 # FLITAR PROFESOR
 def profesores_ha_registrado(periodo_selecionado):
     """ Se filtarán y descartaran los profesores que no hayan hecho ningun registro en el perido actual"""
@@ -81,8 +85,10 @@ def asignar_grupo(base_datos,lista_profesores,lista_grupos,intento,tabla_asignad
         return asignar_grupo(base_datos,lista_profesores,lista_grupos,intento,tabla_asignada)
 
 # ENVIA CORREOS ELECTRONICOS
-def enviar_correo(uid,token,user):
-    activation_link = f"http://localhost:8000/activate/{uid}/{token}/"
+def enviar_correo_activacion(user):
+    uid = urlsafe_base64_encode(force_bytes(user.pk))
+    token = default_token_generator.make_token(user)
+    activation_link = f"http://148.204.57.53:8080/activate/{uid}/{token}/"
     send_mail(
         subject="Activa tu cuenta",
         message=f"Se hizo un registro del usuario {user.username} en el Sistema de Tutorías de la ESCOM. Activa tu cuenta usando este enlace: {activation_link}. Si usted no reconoce esta actividad, ignore este correo.",
