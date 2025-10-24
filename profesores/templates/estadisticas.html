@@ -2,12 +2,23 @@
 
 {% block content %}
 <h6 class="display-6 text-center">Estadísticas</h6>
-<p><a href="/administrador/?periodo={{ periodo }}" class="btn btn-outline-primary"> Regresar </a></p>
-<div class="row align-items-center">
-	<div id="grafica_grupos" class="col" style="width: 600px;height:600px;"></div>
+<div class="row mb-4">
+	<div class="col">
+		<a href="/administrador/?periodo={{ periodo }}" class="btn btn-outline-primary"> Regresar </a>
+	</div>
+	<div class="col text-end">
+		<a href="/administrador/estadisticas/{{ periodo }}/reporte" class="btn btn-success">Ir a tabla de reporte</a>
+	</div>
 </div>
-<div class="row align-items-center">
+
+<div class="row align-items-center border border-dark">
+<div id="grafica_grupos" class="col " style="width: 600px;height:600px;"></div>
+</div>
+<div class="row align-items-center border border-dark">
 	<div id="grafica_alumnos" class="col" style="width: 600px;height:600px;"></div>
+</div>
+<div class="row align-items-center border border-dark">
+	<div id="grafica_tres" class="col" style="width: 600px;height:600px;"></div>
 </div>
 <script>
 	const getOptionChar=async()=>{
@@ -18,13 +29,84 @@
 			alert(error)
 		}
 	}
+
+
 	const initChart = async () => {
 		const options = await getOptionChar()
 		const grafica_g = echarts.init(document.getElementById("grafica_grupos"));
 		const grafica_a = echarts.init(document.getElementById("grafica_alumnos"));
+		const grafica_t = echarts.init(document.getElementById("grafica_tres"));
 		
 		grafica_g.setOption(options.grupos)
 		grafica_a.setOption(options.alumnos)
+		grafica_t.setOption(options.tres)
+		attachLegendHandler();
+		function attachLegendHandler(){
+			grafica_a.on('legendselectchanged', function(params) {
+				const selectedTutorias = Object.entries(params.selected)
+				.filter(([_, visible]) => visible)
+				.map(([name]) => name);
+				
+				const filteredTutorias = options.alumnos.series[1].data.filter(d => selectedTutorias.includes(d.name));
+				const filteredHombres = options.alumnos.series[1].data.filter(d => selectedTutorias.includes(d.name) && d.sexo === 'Hombres');
+				const filteredMujeres = options.alumnos.series[1].data.filter(d => selectedTutorias.includes(d.name) && d.sexo === 'Mujeres');
+				const total = filteredTutorias.reduce((sum, d) => sum + d.value, 0);
+				const totalHombres = filteredHombres.reduce((sum, d) => sum + d.value, 0);
+				const totalMujeres = filteredMujeres.reduce((sum, d) => sum + d.value, 0);
+
+				grafica_a.setOption({
+					graphic: [
+						{
+							style: {
+								text: 'Total: ' + total
+							}
+						},
+						{
+							style: {
+								text: 'Hombres: ' + totalHombres
+							}
+						},
+						{
+							style: {
+								text: 'Mujeres: ' + totalMujeres
+							}
+						}
+					]
+				});
+			});
+			grafica_t.on('legendselectchanged', function(params) {
+				const selectedCarreras = Object.entries(params.selected)
+				.filter(([_, visible]) => visible)
+				.map(([name]) => name);
+				
+				const filteredCarreras = options.tres.series[1].data.filter(d => selectedCarreras.includes(d.name));
+				const filteredHombres = options.tres.series[1].data.filter(d => selectedCarreras.includes(d.name) && d.sexo === 'Hombres');
+				const filteredMujeres = options.tres.series[1].data.filter(d => selectedCarreras.includes(d.name) && d.sexo === 'Mujeres');
+				const total = filteredCarreras.reduce((sum, d) => sum + d.value, 0);
+				const totalHombres = filteredHombres.reduce((sum, d) => sum + d.value, 0);
+				const totalMujeres = filteredMujeres.reduce((sum, d) => sum + d.value, 0)
+				grafica_t.setOption({
+					graphic: [
+						{
+							style: {
+								text: 'Total: ' + total
+							}
+						},
+						{
+							style: {
+								text: 'Hombres: ' + totalHombres
+							}
+						},
+						{
+							style: {
+								text: 'Mujeres: ' + totalMujeres
+							}
+						}
+					]
+				});
+			});
+		}
+		
 	};
 	window.addEventListener("load",async()=>{
 		await initChart()

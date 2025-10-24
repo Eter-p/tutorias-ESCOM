@@ -1,0 +1,47 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+<h6 class="display-6 text-center">Reporte</h6>
+<p><a href="/administrador/estadisticas/{{ periodo }}" class="btn btn-outline-primary"> Regresar </a></p>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <label class="form-label" for="archivo"><b>Instrucciones: </b>Elige un archivo Excel para generar un reporte.</label>
+    <p>El archivo debe tener los campos:</p>
+    <ul>
+        <li class="{% if requisitos.carrera %} text-success {% else %} text-danger {% endif %}">Carrera</li>
+        <li class="{% if requisitos.genero %} text-success {% else %} text-danger {% endif %} ">Genero</li>
+        <li class="{% if requisitos.reprobadas %} text-success {% else %} text-danger {% endif %}">Reprobadas</li>
+        <li class="{% if requisitos.desfasadas %} text-success {% else %} text-danger {% endif %}">Desfasadas</li>
+    </ul>
+    <p>Si pasó la comprobación presione el botón "Generar Reporte".</p>
+    <p><i>Nota: El archivo original no quedará guardado, solo se registrará la información del reporte.</i></p>
+    <input class="form-control" type="file" name="archivo" id="archivo" accept=".xlsx,.xls">
+    <button class="btn btn-primary my-2" type="submit">Comprobar datos</button>
+</form>
+<form method="post" action="/administrador/estadisticas/{{ periodo }}/reporte/generar">
+    {% csrf_token %}
+    {% if requisitos.carrera and requisitos.genero and requisitos.reprobadas and requisitos.desfasadas %}
+        <label for="datos" hidden></label>
+        <input type="text" name="informacion" id="datos" value="{{ data }}" hidden>
+        <label for="confirm" hidden></label>
+        <input type="text" name="confirmacion" id="confirm" value="False" hidden>
+        <button class="btn btn-success my-2 " type="submit">Generar Reporte</button>
+    {% else %}
+        <button class="btn btn-secondary my-2 " disabled>Generar Reporte</button>
+        <p class="text-danger">Al archivo le falta alguno de los campos solicitados</p>
+    {% endif %}
+</form>
+
+{% if data %}
+<div class="table-responsive my-4" style="max-height: 1000px;">
+    <table class="table table-bordered table-striped mt-2">
+        {% for row in data %}
+        <tr>
+            {% for cell in row %}
+            <td>{{ cell }}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+</div>
+{% endblock %}

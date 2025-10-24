@@ -1,5 +1,5 @@
 from django import forms
-from .models import Periodo,Tutorias,TutoriaGrupal,TutoriaPares,TutoriaIndividual,TutoriaMovilidad,TutoriaRegularizacion,TutoriaRecuperacion
+from .models import Periodo,Tutorias,TutoriaGrupal,TutoriaPares,TutoriaIndividual,TutoriaMovilidad,TutoriaRegularizacion,TutoriaRecuperacion,ReporteExcel
 
 class FormPerido(forms.ModelForm):
     class Meta:
@@ -141,4 +141,24 @@ class FormTutoriaRecuperacion(forms.ModelForm):
             "no_hombres_recuperacion" : "Número de Mujeres",
             "no_mujeres_recuperacion" : "Número de Mujeres",
             "lista_alumnos_recuperacion" : "Lista de alumnos"
+        }
+
+class FormReporteExcel(forms.ModelForm):
+    class Meta:
+        model = ReporteExcel
+        fields = [
+            "periodo",
+            "carrera",
+            "hombres_regular",
+            "mujeres_regular",
+            "hombres_irregular",
+            "mujeres_irregular"
+        ]
+        labels = {
+            "periodo": "Periodo",
+            "carrera" : "Carrera",
+            "hombres_regular" : "Hombres regulares",
+            "mujeres_regular" : "Mujeres regulares",
+            "hombres_irregular" : "Hombres irregulares",
+            "mujeres_irregular" : "Mujeres irregulares"
         }

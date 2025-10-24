@@ -106,3 +106,16 @@ class TutoriaRecuperacion(models.Model):
     class Meta:
         verbose_name = "Tutoría de Recuperación"
         verbose_name_plural = "Tutorías de Recuperación"
+        
+class ReporteExcel(models.Model):
+    periodo = models.ForeignKey(Periodo,on_delete=models.CASCADE,blank=True,null=True)
+    carrera = models.CharField(max_length=100,verbose_name="Carrera")
+    hombres_regular = models.IntegerField(default=0,verbose_name="Hombres regulares")
+    mujeres_regular = models.IntegerField(default=0,verbose_name="Mujeres regulares")
+    hombres_irregular = models.IntegerField(default=0,verbose_name="Hombres irregulares")
+    mujeres_irregular = models.IntegerField(default=0,verbose_name="Mujeres irregulares")
+    def __str__(self):
+        return f"{self.periodo} - {self.carrera}"
+    class Meta:
+        verbose_name = "Reporte"
+        verbose_name_plural = "Reportes"

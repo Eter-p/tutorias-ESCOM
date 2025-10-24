@@ -1,7 +1,7 @@
 from django.contrib import admin
 
-from .models import Periodo,Tutorias,TutoriaGrupal,TutoriaPares,TutoriaIndividual,TutoriaMovilidad,TutoriaRegularizacion,TutoriaRecuperacion
-from .forms import FormPerido,FormTutorias,FormTutoriaGrupal,FormTutoriaPares,FormTutoriaIndividual,FormTutoriaMovilidad,FormTutoriaRegularizacion,FormTutoriaRecuperacion
+from .models import Periodo,Tutorias,TutoriaGrupal,TutoriaPares,TutoriaIndividual,TutoriaMovilidad,TutoriaRegularizacion,TutoriaRecuperacion,ReporteExcel
+from .forms import FormPerido,FormTutorias,FormTutoriaGrupal,FormTutoriaPares,FormTutoriaIndividual,FormTutoriaMovilidad,FormTutoriaRegularizacion,FormTutoriaRecuperacion,FormReporteExcel
 
 class PeriodoAdmin(admin.ModelAdmin):
     form = FormPerido
@@ -11,7 +11,7 @@ class PeriodoAdmin(admin.ModelAdmin):
 class TutoriasAdmin(admin.ModelAdmin):
     form = FormTutorias
     list_display = ("mostrar_tutoria","fecha","periodo","tipo","profesor")
-    search_fields = ('profesor__nombre',)
+    search_fields = ('id','profesor__nombre',)
     list_filter = ('tipo','periodo')
     
     def mostrar_tutoria(self, obj):
@@ -51,6 +51,19 @@ class TutoriaRecuperacionAdmin(admin.ModelAdmin):
     search_fields = ("tutoria__profesor__nombre","unidad_aprendizaje_recuperacion")
     list_filter = ("carrera_recuperacion",)
 
+"periodo"
+"carrera"
+"hombres_regular"
+"mujeres_regular"
+"hombres_irregular"
+"mujeres_irregular"
+
+class ReporteExcelAdmin(admin.ModelAdmin):
+    form = FormReporteExcel
+    list_display = ("periodo","carrera","hombres_regular","mujeres_regular","hombres_irregular","mujeres_irregular")
+    search_fields = ("periodo","carrera")
+    list_filter = ("carrera",)
+
 admin.site.register(Periodo,PeriodoAdmin)
 admin.site.register(Tutorias,TutoriasAdmin)
 admin.site.register(TutoriaGrupal,TutoriaGrupalAdmin)
@@ -59,3 +72,4 @@ admin.site.register(TutoriaIndividual,TutoriaIndividuaAdmin)
 admin.site.register(TutoriaMovilidad,TutoriaMovilidadAdmin)
 admin.site.register(TutoriaRegularizacion,TutoriaRegularizacionAdmin)
 admin.site.register(TutoriaRecuperacion,TutoriaRecuperacionAdmin)
+admin.site.register(ReporteExcel,ReporteExcelAdmin)

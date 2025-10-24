@@ -1,0 +1,63 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+<h6 class="display-6 text-center">Reporte</h6>
+
+<div class="row mb-4">
+	<div class="col">
+		<a href="/administrador/estadisticas/{{ periodo }}" class="btn btn-outline-primary"> Regresar </a>
+	</div>
+	<div class="col text-end">
+		<a href="/administrador/estadisticas/{{ periodo }}/reporte/eliminar" class="btn btn-danger">Borrar reporte</a>
+	</div>
+</div>
+<div class="h6">
+    <p>Si quiere elegir otro archivo para el reporte, borre el reporte actual y siga las instrucciones.</p>
+</div>
+{% for a,b in data.items %}
+<div class="card card-body text-center my-2">
+    <div class="h6">
+        {% if a.carrera == "isc" %}
+            Ingeniería  en Sistemas Computacionales
+        {% elif a.carrera == "iia" %}
+            Ingeniería en Inteligencia Artificial
+        {% elif a.carrera == "lcd" %}
+            Licenciatura en Ciencia de Datos
+        {% elif a.carrera == "isisa" %}
+            Ingeniería en Sistemas Automotrices
+        {% else %}
+            {{ a.carrera }}
+        {% endif %}
+        - {{ a.periodo }}
+    </div>
+    <table class="table table-striped">
+        <thead>
+            <th scope="col"> </th>
+            <th scope="col">Regular</th>
+            <th scope="col">Irregular</th>
+            <th scope="col">Suma</th>
+        </thead>
+        <tbody>
+            <tr>
+                <th scope="row">Hombre</th>
+                <td>{{ a.hombres_regular }}</td>
+                <td>{{ a.hombres_irregular }}</td>
+                <td>{{ b.hombres }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Mujer</th>
+                <td>{{ a.mujeres_regular }}</td>
+                <td>{{ a.mujeres_irregular }}</td>
+                <td>{{ b.mujeres }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Suma    </th>
+                <td>{{ b.regulares }}</td>
+                <td>{{ b.irregulares }}</td>
+                <td>{{ b.total }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+    
+{% endfor %}
+{% endblock %}

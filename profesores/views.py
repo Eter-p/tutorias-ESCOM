@@ -12,6 +12,8 @@ from .utils import profesores_ha_registrado,asignar_grupos,enviar_correo_activac
 from tutorias.utils import periodo_actual
 from tutorias.models import Periodo,TutoriaGrupal,TutoriaPares,TutoriaIndividual,TutoriaMovilidad,TutoriaRegularizacion,TutoriaRecuperacion
 
+from pprint import pprint
+
 def inicio(request):
     """ En la pantalla de inicio se hace una comprobacion de cuantas y cuales tutorías ha registrado el usuario """
     conteo_tutorias = {}
@@ -103,32 +105,47 @@ def get_char(request,periodo):
     conteo_tutorias = {}
     tipos_tutorias = [TutoriaGrupal,TutoriaIndividual,TutoriaPares,TutoriaRegularizacion,TutoriaRecuperacion,TutoriaMovilidad]
     nombres_tutorias = ["grupales","individuales","pares","regularizacion","recuperacion","movilidad"]
+    
+    total_alumnos = 0
+    total_hombres = 0
+    total_mujeres = 0
+    
     for tipo_tutoria,nombre_tutorias in zip(tipos_tutorias,nombres_tutorias):
         lista_profesores = []
-        contador_alumnos = 0
+        contador_alumnos_h = 0
+        contador_alumnos_m = 0
         for instancia in tipo_tutoria.objects.select_related('tutoria__profesor').filter(tutoria__periodo__nombre_periodo=periodo):
             profesor = instancia.tutoria.profesor
             if profesor not in lista_profesores:
                 lista_profesores.append(profesor)
-                if tipo_tutoria == TutoriaGrupal:
-                    contador_alumnos = contador_alumnos + int (instancia.no_hombres_grupal) + int(instancia.no_mujeres_grupal)
+            if tipo_tutoria == TutoriaGrupal:
+                if instancia.tutoria_asignada==True:
+                    contador_alumnos_h = contador_alumnos_h + int (instancia.no_hombres_grupal)
+                    contador_alumnos_m = contador_alumnos_m + int(instancia.no_mujeres_grupal)
             if tipo_tutoria == TutoriaIndividual:
-                contador_alumnos = contador_alumnos + int (instancia.no_hombres_individual) + int(instancia.no_mujeres_individual)
+                contador_alumnos_h = contador_alumnos_h + int (instancia.no_hombres_individual)
+                contador_alumnos_m = contador_alumnos_m + int(instancia.no_mujeres_individual)
             if tipo_tutoria == TutoriaPares:
-                contador_alumnos = contador_alumnos + 1
+                contador_alumnos_h = contador_alumnos_h + 1
             if tipo_tutoria == TutoriaRegularizacion:
-                contador_alumnos = contador_alumnos + int (instancia.no_hombres_regularizacion) + int(instancia.no_mujeres_regularizacion)
+                contador_alumnos_h = contador_alumnos_h + int (instancia.no_hombres_regularizacion)
+                contador_alumnos_m = contador_alumnos_m + int(instancia.no_mujeres_regularizacion)
             if tipo_tutoria == TutoriaRecuperacion:
-                contador_alumnos = contador_alumnos + int (instancia.no_hombres_recuperacion) + int(instancia.no_mujeres_recuperacion)
+                contador_alumnos_h = contador_alumnos_h + int (instancia.no_hombres_recuperacion)
+                contador_alumnos_m = contador_alumnos_m + int(instancia.no_mujeres_recuperacion)
             if tipo_tutoria == TutoriaMovilidad:
-                contador_alumnos = contador_alumnos + int (instancia.no_hombres_movilidad) + int(instancia.no_mujeres_movilidad)
+                contador_alumnos_h = contador_alumnos_h + int (instancia.no_hombres_movilidad)
+                contador_alumnos_m = contador_alumnos_m + int(instancia.no_mujeres_movilidad)
         conteo_tutorias["profesores_"+nombre_tutorias] = len(lista_profesores)
-        conteo_tutorias["alumnos_"+nombre_tutorias] = contador_alumnos
-    
-    individales = 0
-    for tutoria in TutoriaIndividual.objects.filter(tutoria__periodo__nombre_periodo=periodo):
-        individales = individales + int (tutoria.no_hombres_individual) + int(tutoria.no_mujeres_individual)
+        conteo_tutorias["alumnos_h_"+nombre_tutorias] = contador_alumnos_h
+        total_hombres = total_hombres + contador_alumnos_h 
+        conteo_tutorias["alumnos_m_"+nombre_tutorias] = contador_alumnos_m
+        total_mujeres = total_mujeres + contador_alumnos_m
         
+    total_alumnos = total_alumnos + total_hombres + total_mujeres
+    
+    
+    #GRAFICA 1
     option_grupos = {
         "title": {
             "text": "Número de profesores que registarón tutorías",
@@ -145,7 +162,7 @@ def get_char(request,periodo):
         },
         "series": [{
             "type": 'pie',
-            "radius": '75%',
+            "radius": ["10%",'75%'],
             "data": [
                 { "value": conteo_tutorias["profesores_grupales"], "name": 'Grupales'},
                 { "value": conteo_tutorias["profesores_individuales"], "name": 'Individuales'},
@@ -168,47 +185,253 @@ def get_char(request,periodo):
         }]
     }
     
+    #GRAFICA 2
     option_alumnos = {
         "title": {
-            "text": "Número de alumnos registrados",
+            "text": "Distribución de alumnos registrados por tipo de Tutoría",
             "subtext": f"Periodo {periodo}",
             "left": 'center',
             "textStyle":{"fontSize":20}
         },
         "tooltip": {
             "trigger": "item",
-            },
+        },
         "legend": {
             "orient": 'vertical',
             "left": 'left'
         },
-        "series": [{
-            "type": 'pie',
-            "radius": '75%',
-            "data": [
-                { "value": conteo_tutorias["alumnos_grupales"], "name": 'Grupales'},
-                { "value": conteo_tutorias["alumnos_individuales"], "name": 'Individuales'},
-                { "value": conteo_tutorias["alumnos_pares"], "name": 'Pares'},
-                { "value": conteo_tutorias["alumnos_regularizacion"], "name": 'Regularización'},
-                { "value": conteo_tutorias["alumnos_recuperacion"], "name": 'Recuperación'},
-                { "value": conteo_tutorias["alumnos_movilidad"], "name": 'Movilidad'},
-            ],
-            "label": {
-                "fontSize": 16,
-                "formatter":" {b}: {c}"
+        "series": [
+            {
+                "type": 'pie',
+                "radius": ["60%",'75%'],
+                "data": [
+                    { "value": conteo_tutorias["alumnos_h_grupales"] + conteo_tutorias["alumnos_m_grupales"], "name": 'Grupales'},
+                    { "value": conteo_tutorias["alumnos_h_individuales"] + conteo_tutorias["alumnos_m_individuales"], "name": 'Individuales'},
+                    { "value": conteo_tutorias["alumnos_h_pares"], "name": 'Pares'},
+                    { "value": conteo_tutorias["alumnos_h_regularizacion"] + conteo_tutorias["alumnos_m_regularizacion"], "name": 'Regularización'},
+                    { "value": conteo_tutorias["alumnos_h_recuperacion"] + conteo_tutorias["alumnos_m_recuperacion"], "name": 'Recuperación'},
+                    { "value": conteo_tutorias["alumnos_h_movilidad"] + conteo_tutorias["alumnos_m_movilidad"], "name": 'Movilidad'},
+                ],
+                "label": {
+                    "fontSize": 16,
+                    "formatter":" {b}: {c}"
+                },
+                "emphasis": {
+                    "itemStyle": {
+                    "shadowBlur": 10,
+                    "shadowOffsetX": 0,
+                    "shadowColor": 'rgba(0, 0, 0, 0.5)'
+                    }
+                }
             },
-            "emphasis": {
-                "itemStyle": {
-                "shadowBlur": 10,
-                "shadowOffsetX": 0,
-                "shadowColor": 'rgba(0, 0, 0, 0.5)'
+            {
+               "type": 'pie',
+                'radius': ['10%','60%'],
+                "data": [
+                    { "value": conteo_tutorias["alumnos_h_grupales"], "name": 'Grupales', 'itemStyle': {'color': '#4A90E2'},"label":{'formatter': 'H\n{c}'}, "sexo":"Hombres"},
+                    { "value": conteo_tutorias["alumnos_m_grupales"], "name": 'Grupales', 'itemStyle': {'color': '#FF69B4'},"label":{'formatter': 'M\n{c}'}, "sexo":"Mujeres"},
+                    { "value": conteo_tutorias["alumnos_h_individuales"], "name": 'Individuales', 'itemStyle': {'color': '#4A90E2'},"label":{'formatter': 'H\n{c}'}, "sexo":"Hombres"},
+                    { "value": conteo_tutorias["alumnos_m_individuales"], "name": 'Individuales', 'itemStyle': {'color': '#FF69B4'},"label":{'formatter': 'M\n{c}'}, "sexo":"Mujeres"},
+                    { "value": conteo_tutorias["alumnos_h_pares"], "name": 'Pares',"label":{'formatter': '{c}'}},
+                    { "value": conteo_tutorias["alumnos_h_regularizacion"], "name": 'Regularización', 'itemStyle': {'color': '#4A90E2'},"label":{'formatter': 'H\n{c}'}, "sexo":"Hombres"},
+                    { "value": conteo_tutorias["alumnos_m_regularizacion"], "name": 'Regularización', 'itemStyle': {'color': '#FF69B4'},"label":{'formatter': 'M\n{c}'}, "sexo":"Mujeres"},
+                    { "value": conteo_tutorias["alumnos_h_recuperacion"], "name": 'Recuperación', 'itemStyle': {'color': '#4A90E2'},"label":{'formatter': 'H\n{c}'}, "sexo":"Hombres"},
+                    { "value": conteo_tutorias["alumnos_m_recuperacion"], "name": 'Recuperación', 'itemStyle': {'color': '#FF69B4'},"label":{'formatter': 'M\n{c}'}, "sexo":"Mujeres"},
+                    { "value": conteo_tutorias["alumnos_h_movilidad"], "name": 'Movilidad', 'itemStyle': {'color': '#4A90E2'},"label":{'formatter': 'H\n{c}'}, "sexo":"Hombres"},
+                    { "value": conteo_tutorias["alumnos_m_movilidad"], "name": 'Movilidad', 'itemStyle': {'color': '#FF69B4'},"label":{'formatter': 'M\n{c}'}, "sexo":"Mujeres"},
+                ],
+                'label': {
+                    'position': 'inner',
+                    'formatter': '{b}\n{c}'
                 }
             }
-        }]
+        ],
+        'graphic': [
+            {
+                'type': 'text',
+                'left': '85%',
+                'top': '30%',
+                'style': {
+                    'text': f'Total:\t{total_alumnos}',
+                    'textAlign': 'center',
+                    'fontSize': 18
+                }
+            },
+            {
+                'type': 'text',
+                'left': '85%',
+                'top': '10%',
+                'style': {
+                    'text': f'Hombres:\t{total_hombres-conteo_tutorias["alumnos_h_pares"]}',
+                    'textAlign': 'center',
+                    'fontSize': 18
+                }
+            },
+            {
+                'type': 'text',
+                'left': '85%',
+                'top': '20%',
+                'style': {
+                    'text': f'Mujeres:\t{total_mujeres}',
+                    'textAlign': 'center',
+                    'fontSize': 18
+                }
+            }
+        ]
     }
+    
+    contador_genero_carrera = {
+        "isc_hombres":0,
+        "isc_mujeres":0,
+        "iia_hombres":0,
+        "iia_mujeres":0,
+        "lcd_hombres":0,
+        "lcd_mujeres":0,
+        "isisa_hombres":0,
+        "isisa_mujeres":0
+    }
+    
+    for instancia in TutoriaGrupal.objects.filter(tutoria__periodo__nombre_periodo=periodo,tutoria_asignada=True):
+        if instancia.carrera == "isc":
+            contador_genero_carrera["isc_hombres"] = contador_genero_carrera["isc_hombres"] + instancia.no_hombres_grupal
+            contador_genero_carrera["isc_mujeres"] = contador_genero_carrera["isc_mujeres"] + instancia.no_mujeres_grupal
+        if instancia.carrera == "iia":
+            contador_genero_carrera["iia_hombres"] = contador_genero_carrera["iia_hombres"] + instancia.no_hombres_grupal
+            contador_genero_carrera["iia_mujeres"] = contador_genero_carrera["iia_mujeres"] + instancia.no_mujeres_grupal
+        if instancia.carrera == "lcd":
+            contador_genero_carrera["lcd_hombres"] = contador_genero_carrera["lcd_hombres"] + instancia.no_hombres_grupal
+            contador_genero_carrera["lcd_mujeres"] = contador_genero_carrera["lcd_mujeres"] + instancia.no_mujeres_grupal
+        if instancia.carrera == "isisa":
+            contador_genero_carrera["isisa_hombres"] = contador_genero_carrera["isisa_hombres"] + instancia.no_hombres_grupal
+            contador_genero_carrera["isisa_mujeres"] = contador_genero_carrera["isisa_mujeres"] + instancia.no_mujeres_grupal
+        
+    carreras = [
+        {'name': 'Ing. Sistemas Computacionales', 'hombres': contador_genero_carrera["isc_hombres"], 'mujeres': contador_genero_carrera["isc_mujeres"]},
+        {'name': 'Ing. Inteligencia Artificial', 'hombres': contador_genero_carrera["iia_hombres"], 'mujeres': contador_genero_carrera["iia_mujeres"]},
+        {'name': 'Lic. Ciencia de Datos', 'hombres':  contador_genero_carrera["lcd_hombres"], 'mujeres': contador_genero_carrera["lcd_mujeres"]},
+        {'name': 'ISISA', 'hombres': contador_genero_carrera["isisa_hombres"], 'mujeres': contador_genero_carrera["isisa_mujeres"]}
+    ]
+
+    outer_data = []
+    inner_data = []
+    legend_selected = {}
+    legend_data = [c['name'] for c in carreras]
+    legend_selected = {name: True for name in legend_data}
+    for carrera in carreras:
+        total = carrera['hombres'] + carrera['mujeres']
+        outer_data.append({
+            'name': carrera['name'],
+            'value': total
+        })
+        inner_data.append({
+            'name': carrera['name'],
+            'value': carrera['hombres'],
+            "label":{'formatter': 'H\n{c}'},
+            'sexo':'Hombres',
+            'itemStyle': {
+                'color': '#4A90E2' 
+            }
+        })
+        inner_data.append({
+            'name': carrera['name'],
+            'value': carrera['mujeres'],
+            "label":{'formatter': 'M\n{c}'},
+            'sexo':'Mujeres',
+            'itemStyle': {
+                'color': '#FF69B4'
+            }
+        })
+        legend_selected[carrera['name']] = True
+
+    total_alumnos_carrera = sum(c['hombres'] + c['mujeres'] for c in carreras)
+    #GRAFICA 3
+    option = {
+        'title': {
+            'text': 'Distribución de alumnos por carrera',
+            'left': 'center'
+        },
+        'tooltip': {
+            'trigger': 'item',
+            'formatter': '{b}: {c}'
+        },
+        
+        'legend': {
+            'type': 'scroll',
+            'orient': 'vertical',
+            'left': 'left',
+            'data': legend_data,
+            'selected': legend_selected
+        },
+        'series': [
+            {
+                'name': 'Carreras',
+                'type': 'pie',
+                'radius': ['60%', '75%'],
+                "label": {
+                    "fontSize": 16,
+                    "formatter":" {b}: {c}",
+                },
+                'data': outer_data
+            },
+            {
+                'name': 'Alumnos',
+                'type': 'pie',
+                'radius': ['10%', '60%'],
+                'label': {
+                    'position': 'inner',
+                    'formatter': '{b}\n{c}'
+                },
+                'data': inner_data,
+            }
+        ],
+        'graphic': [
+            {
+                'type': 'text',
+                'left': '85%',
+                'top': '30%',
+                'style': {
+                    'text': f'Total: {total_alumnos_carrera}',
+                    'textAlign': 'center',
+                    'fontSize': 18
+                }
+            },
+            {
+                'type': 'text',
+                'left': '85%',
+                'top': '10%',
+                'style': {
+                    'text': f'Hombres: {
+                        contador_genero_carrera["isc_hombres"]+
+                        contador_genero_carrera["iia_hombres"]+
+                        contador_genero_carrera["lcd_hombres"]+
+                        contador_genero_carrera["isisa_hombres"]
+                    }',
+                    'textAlign': 'center',
+                    'fontSize': 18
+                }
+            },
+            {
+                'type': 'text',
+                'left': '85%',
+                'top': '20%',
+                'style': {
+                    'text': f'Mujeres: {
+                        contador_genero_carrera["isc_mujeres"]+
+                        contador_genero_carrera["iia_mujeres"]+
+                        contador_genero_carrera["lcd_mujeres"]+
+                        contador_genero_carrera["isisa_mujeres"]    
+                    }',
+                    'textAlign': 'center',
+                    'fontSize': 18
+                }
+            }
+        ]
+    }
+    
     return JsonResponse({
         "grupos": option_grupos,
-        "alumnos": option_alumnos
+        "alumnos": option_alumnos,
+        "tres":option
     })
 
 @login_required
@@ -358,6 +581,7 @@ def signout(request):
 def reenviar_activacion(request):
     enviar_correo_activacion(Profesor.objects.get(email=request.POST["correo"]))
     return render(request,"responseHTML/success.html",{"success":"correo reenviado"})
+
 def activate_account(request, uidb64, token):
     try:
         uid = urlsafe_base64_decode(uidb64).decode()

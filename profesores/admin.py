@@ -17,7 +17,7 @@ class CustomUserAdmin(UserAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('username', 'email', 'correo_alterno', 'password1', 'password2'),
+            'fields': ('nombre', 'email', 'correo_alterno', 'username', 'password1', 'password2', 'is_active', 'is_staff'),
         }),
     )
 
@@ -25,9 +25,4 @@ class CustomUserAdmin(UserAdmin):
     search_fields = ('username', 'email')
 
 admin.site.register(Profesor, CustomUserAdmin)
-# class ProfesorAdmin(admin.ModelAdmin):
-#     form = FormProfesor
-#     list_display = ("id","nombre",'correo_institucional','correo_alterno')
-#     search_fields = ('nombre',)
-
 admin.site.unregister(Group)

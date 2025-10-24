@@ -1,11 +1,14 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.shortcuts import render,redirect
+from openpyxl import load_workbook
 
 from profesores.utils import profesores_ha_registrado
-from .models import Tutorias,TutoriaGrupal,TutoriaPares,TutoriaIndividual,TutoriaMovilidad,TutoriaRegularizacion,TutoriaRecuperacion
+from .models import Periodo,Tutorias,TutoriaGrupal,TutoriaPares,TutoriaIndividual,TutoriaMovilidad,TutoriaRegularizacion,TutoriaRecuperacion,ReporteExcel
 from .utils import falta_datos, listar_alumnos,periodo_actual
+from pprint import pprint
 
+import ast
 #REGISTRO DE LAS TUTORÍAS ------------------------------------------------------------------
 @login_required
 def registrar_tutoria(request,tipo):
@@ -13,17 +16,17 @@ def registrar_tutoria(request,tipo):
         """ Primero se verifica que tipo de tutoria se esta registrando y cuantas ya se han registrado """
         total_tutorias = 0
         if tipo == "grupal":
-            total_tutorias = len(TutoriaGrupal.objects.filter(tutoria__profesor=request.user))
+            total_tutorias = len(TutoriaGrupal.objects.filter(tutoria__profesor=request.user,tutoria__periodo__nombre_periodo=periodo_actual))
         if tipo == "pares":
-            total_tutorias = len(TutoriaPares.objects.filter(tutoria__profesor=request.user))
+            total_tutorias = len(TutoriaPares.objects.filter(tutoria__profesor=request.user,tutoria__periodo__nombre_periodo=periodo_actual))
         if tipo == "individual":
-            total_tutorias = len(TutoriaIndividual.objects.filter(tutoria__profesor=request.user))
+            total_tutorias = len(TutoriaIndividual.objects.filter(tutoria__profesor=request.user,tutoria__periodo__nombre_periodo=periodo_actual))
         if tipo == "movilidad":
-            total_tutorias = len(TutoriaMovilidad.objects.filter(tutoria__profesor=request.user))
+            total_tutorias = len(TutoriaMovilidad.objects.filter(tutoria__profesor=request.user,tutoria__periodo__nombre_periodo=periodo_actual))
         if tipo == "regularizacion":
-            total_tutorias = len(TutoriaRegularizacion.objects.filter(tutoria__profesor=request.user))
+            total_tutorias = len(TutoriaRegularizacion.objects.filter(tutoria__profesor=request.user,tutoria__periodo__nombre_periodo=periodo_actual))
         if tipo == "recuperacion":
-            total_tutorias = len(TutoriaRecuperacion.objects.filter(tutoria__profesor=request.user))
+            total_tutorias = len(TutoriaRecuperacion.objects.filter(tutoria__profesor=request.user,tutoria__periodo__nombre_periodo=periodo_actual))
         return render(request,f"formsTutorias/{tipo}.html",{"total_tutorias":total_tutorias})
     try:
         
@@ -307,4 +310,199 @@ def flitrar_datos(request,tipo_tutoria,periodo):
                 elif tipo_tutoria == TutoriaRecuperacion:
                     tutorias_filtradas = tutorias_filtradas | tipo_tutoria.objects.select_related('tutoria__profesor').filter(carrera_recuperacion=carrera)
     return tutorias_filtradas.order_by("tutoria__profesor__nombre")
-    
+
+@login_required
+def upload_excel(request,periodo):
+    data = []
+    if request.method == 'POST' and request.FILES.get('archivo'):
+        excel_file = request.FILES['archivo']
+        wb = load_workbook(excel_file, data_only=True)
+        ws = wb.active
+        i = 0
+        requisitos = {"carrera":False,"genero":False,"reprobadas":False,"desfasadas":False}
+
+        for row in ws.iter_rows(values_only=True):
+            for item in row:
+                for subtexto in requisitos.keys():
+                    encontrado = subtexto in str(item).lower()
+                    if encontrado:
+                        requisitos[subtexto] = encontrado
+                        continue
+            if i==2:
+                break
+            i=i+1
+        for row in ws.iter_rows(values_only=True):
+            data.append(row)
+        return render(request, 'get_reporte_excel.html', {'data': data,'periodo':periodo,'requisitos':requisitos})
+    reporte = ReporteExcel.objects.filter(periodo__nombre_periodo=periodo)
+    if reporte:
+        data = {}
+        for tabla in reporte:
+            sumas = {
+                "hombres" : tabla.hombres_regular + tabla.hombres_irregular,
+                "mujeres" : tabla.mujeres_regular + tabla.mujeres_irregular,
+                "regulares" : tabla.hombres_regular + tabla.mujeres_regular,
+                "irregulares" : tabla.hombres_irregular + tabla.mujeres_irregular,
+                "total" : tabla.hombres_regular + tabla.hombres_irregular + tabla.mujeres_regular + tabla.mujeres_irregular
+            }
+            data[tabla] = sumas
+        return render(request, 'reporte_excel.html', {'data': data,'periodo':periodo})
+    return render(request, 'get_reporte_excel.html', {'data': data,'periodo':periodo})
+
+@login_required
+def generar_reporte_excel(request,periodo):
+    if request.method == 'GET':
+        return redirect("reporte_exel")
+    try:
+        confirmacion = ast.literal_eval(request.POST.get("confirmacion"))
+        contadores = {}
+        if not confirmacion:
+            data_recibida = ast.literal_eval(request.POST.get("informacion"))
+            error_data = []
+            columna = {"carrera":0,"genero":0,"reprobadas":0,"desfasadas":0}
+            contadores = {
+                "isc_hombres_regular": 0,
+                "isc_mujeres_regular": 0,
+                "isc_hombres_irregular": 0,
+                "isc_mujeres_irregular": 0,
+                "iia_hombres_regular": 0,
+                "iia_mujeres_regular": 0,
+                "iia_hombres_irregular": 0,
+                "iia_mujeres_irregular": 0,
+                "lcd_hombres_regular": 0,
+                "lcd_mujeres_regular": 0,
+                "lcd_hombres_irregular": 0,
+                "lcd_mujeres_irregular": 0,
+                "isisa_hombres_regular": 0,
+                "isisa_mujeres_regular": 0,
+                "isisa_hombres_irregular": 0,
+                "isisa_mujeres_irregular": 0
+            }
+            
+            for i,col in enumerate(data_recibida.pop(0)):
+                if  col.lower() == "carrera":
+                    columna["carrera"] = i
+                if  col.lower() == "genero":
+                    columna["genero"] = i
+                if  col.lower() == "reprobadas":
+                    columna["reprobadas"] = i
+                if  col.lower() == "desfasadas":
+                    columna["desfasadas"] = i
+
+            for i,linea in enumerate(data_recibida):
+                if linea[columna["carrera"]] == "ING. EN SIS. COMPUTACIONALES":
+                    if linea[columna["genero"]] == "HOMBRE":
+                        if (int(linea[columna["reprobadas"]])+int(linea[columna["desfasadas"]]))==0:
+                            contadores["isc_hombres_regular"] += 1
+                        else:
+                            contadores["isc_hombres_irregular"] += 1
+                    elif linea[columna["genero"]] == "MUJER":
+                        if (int(linea[columna["reprobadas"]])+int(linea[columna["desfasadas"]]))==0:
+                            contadores["isc_mujeres_regular"] += 1
+                        else:
+                            contadores["isc_mujeres_irregular"] += 1
+                    else:
+                        error_data.append(i+2)
+                elif linea[columna["carrera"]] == "INGENIERIA EN INTELIGENCIA ARTIFICIAL":
+                    if linea[columna["genero"]] == "HOMBRE":
+                        if (int(linea[columna["reprobadas"]])+int(linea[columna["desfasadas"]]))==0:
+                            contadores["iia_hombres_regular"] +=  1
+                        else:
+                            contadores["iia_hombres_irregular"] += 1
+                    elif linea[columna["genero"]] == "MUJER":
+                        if (int(linea[columna["reprobadas"]])+int(linea[columna["desfasadas"]]))==0:
+                            contadores["iia_mujeres_regular"] += 1
+                        else:
+                            contadores["iia_mujeres_irregular"] += 1
+                    else:
+                        error_data.append(i+2)
+                elif linea[columna["carrera"]] == "LICENCIATURA EN CIENCIA DE DATOS":
+                    if linea[columna["genero"]] == "HOMBRE":
+                        if (int(linea[columna["reprobadas"]])+int(linea[columna["desfasadas"]]))==0:
+                            contadores["lcd_hombres_regular"] += 1
+                        else:
+                            contadores["lcd_hombres_irregular"] +=  1
+                    elif linea[columna["genero"]] == "MUJER":
+                        if (int(linea[columna["reprobadas"]])+int(linea[columna["desfasadas"]]))==0:
+                            contadores["lcd_mujeres_regular"] += 1
+                        else:
+                            contadores["lcd_mujeres_irregular"] += 1
+                    else:
+                        error_data.append(i+2)
+                elif linea[columna["carrera"]] == "ING. EN SISTEMAS AUTOMOTRICES":
+                    if linea[columna["genero"]] == "HOMBRE":
+                        if (int(linea[columna["reprobadas"]])+int(linea[columna["desfasadas"]]))==0:
+                            contadores["isisa_hombres_regular"] += 1
+                        else:
+                            contadores["isisa_hombres_irregular"] += 1
+                    elif linea[columna["genero"]] == "MUJER":
+                        if (int(linea[columna["reprobadas"]])+int(linea[columna["desfasadas"]]))==0:
+                            contadores["isisa_mujeres_regular"] += 1
+                        else:
+                            contadores["isisa_mujeres_irregular"] += 1
+                    else:
+                        error_data.append(i+2)
+                else:
+                    error_data.append(i+2)
+            if len(error_data) > 0:
+                return render(request,"responseHTML/failure.html", {"failure":"error_reporte","data":contadores,"error_data":error_data,"periodo":periodo})
+        if confirmacion:
+            contadores = ast.literal_eval(request.POST.get("informacion"))
+            
+        periodo_id = Periodo.objects.get(nombre_periodo = periodo)
+        r_isc = ReporteExcel(
+            periodo = periodo_id,
+            carrera = "isc",
+            hombres_regular = contadores["isc_hombres_regular"],
+            mujeres_regular = contadores["isc_hombres_irregular"],
+            hombres_irregular = contadores["isc_mujeres_regular"],
+            mujeres_irregular = contadores["isc_mujeres_irregular"],
+        )
+        r_iia = ReporteExcel(
+            periodo = periodo_id,
+            carrera = "iia",
+            hombres_regular = contadores["iia_hombres_regular"],
+            mujeres_regular = contadores["iia_hombres_irregular"],
+            hombres_irregular = contadores["iia_mujeres_regular"],
+            mujeres_irregular = contadores["iia_mujeres_irregular"],
+        )
+        r_lcd = ReporteExcel(
+            periodo = periodo_id,
+            carrera = "lcd",
+            hombres_regular = contadores["lcd_hombres_regular"],
+            mujeres_regular = contadores["lcd_hombres_irregular"],
+            hombres_irregular = contadores["lcd_mujeres_regular"],
+            mujeres_irregular = contadores["lcd_mujeres_irregular"],
+        )
+        r_isisa = ReporteExcel(
+            periodo = periodo_id,
+            carrera = "isisa",
+            hombres_regular = contadores["isisa_hombres_regular"],
+            mujeres_regular = contadores["isisa_hombres_irregular"],
+            hombres_irregular = contadores["isisa_mujeres_regular"],
+            mujeres_irregular = contadores["isisa_mujeres_irregular"],
+        )
+        r_escom = ReporteExcel(
+            periodo = periodo_id,
+            carrera = "ESCOM",
+            hombres_regular = contadores["isc_hombres_regular"] + contadores["iia_hombres_regular"] + contadores["lcd_hombres_regular"] + contadores["isisa_hombres_regular"],
+            mujeres_regular = contadores["isc_mujeres_regular"] + contadores["iia_mujeres_regular"] + contadores["lcd_mujeres_regular"] + contadores["isisa_mujeres_regular"],
+            hombres_irregular = contadores["isc_hombres_irregular"] + contadores["iia_hombres_irregular"] + contadores["lcd_hombres_irregular"] + contadores["isisa_hombres_irregular"],
+            mujeres_irregular = contadores["isc_mujeres_irregular"] + contadores["iia_mujeres_irregular"] + contadores["lcd_mujeres_irregular"] + contadores["isisa_mujeres_irregular"]
+        )
+        r_isc.save()
+        r_iia.save()
+        r_lcd.save()
+        r_isisa.save()
+        r_escom.save()
+        return redirect("reporte_excel",periodo)
+    except Exception as e:
+        return render(request,"responseHTML/failure.html",{"error":e})
+
+@login_required
+def  eliminar_reporte(request,periodo):
+    try:
+        ReporteExcel.objects.filter(periodo__nombre_periodo=periodo).delete()
+        return redirect ("reporte_excel",periodo)
+    except Exception as e:
+        return render(request,"responseHTML/failure.html",{"error":e})
